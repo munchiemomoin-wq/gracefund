@@ -14,14 +14,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GraceFund — Giving Hope. Sharing Grace. Changing Lives.",
-  description: "GraceFund connects the Christian community to people, families, churches, ministries, and communities in need. Together, we turn generosity into real impact.",
-  keywords: ["Christian crowdfunding", "church fundraising", "missionary support", "donate", "charity", "GraceFund"],
+  title: "GraceFund — Giving Hope. Changing Lives.",
+  description: "GraceFund is a trusted community crowdfunding platform where people, families, communities, organizations, and meaningful causes can come together to raise and give support when it matters most.",
+  keywords: ["crowdfunding", "fundraising", "donate", "charity", "community", "medical fundraising", "education support", "GraceFund", "nonprofit"],
   authors: [{ name: "GraceFund" }],
   icons: { icon: "/logo.svg" },
   openGraph: {
-    title: "GraceFund — Giving Hope. Sharing Grace. Changing Lives.",
-    description: "A modern Christian crowdfunding platform connecting people with causes that matter.",
+    title: "GraceFund — Giving Hope. Changing Lives.",
+    description: "A trusted community crowdfunding platform connecting people with causes that matter.",
     siteName: "GraceFund",
     type: "website",
   },

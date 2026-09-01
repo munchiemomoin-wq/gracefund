@@ -5,9 +5,8 @@ import { useAppStore } from '@/store/app-store';
 import { CampaignCard } from './campaign-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, SlidersHorizontal, X, ArrowLeft } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Search, ArrowLeft } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 
 interface Campaign {
   id: string;
@@ -22,7 +21,7 @@ interface Campaign {
   isUrgent: boolean;
   verificationLevel: string;
   endDate: string | null;
-  category?: { name: string; icon: string; slug: string } | null;
+ category?: { name: string; icon: string; slug: string } | null;
   organizer?: { name: string | null } | null;
   _count?: { donations: number; prayers: number };
 }
@@ -34,6 +33,16 @@ interface Category {
   icon: string;
 }
 
+const typeFilters = [
+  { key: 'all', label: 'All Types' },
+  { key: 'individual', label: 'Individual' },
+  { key: 'family', label: 'Family' },
+  { key: 'community', label: 'Community' },
+  { key: 'charity', label: 'Charity' },
+  { key: 'faith_based', label: 'Faith-Based' },
+  { key: 'organization', label: 'Organization' },
+];
+
 export function ExploreView() {
   const { setCurrentView, searchQuery, setSearchQuery, selectedCategory, setSelectedCategory } = useAppStore();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -41,7 +50,6 @@ export function ExploreView() {
   const [loading, setLoading] = useState(true);
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const [activeFilter, setActiveFilter] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
 
   const fetchCampaigns = useCallback(async () => {
@@ -86,9 +94,14 @@ export function ExploreView() {
     { key: 'featured', label: 'Featured' },
   ];
 
+  const sortOptions = [
+    { key: 'newest', label: 'Newest' },
+    { key: 'most_funded', label: 'Most Funded' },
+    { key: 'ending_soon', label: 'Ending Soon' },
+  ];
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Back to home */}
       <button
         onClick={() => setCurrentView('home')}
         className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -96,7 +109,6 @@ export function ExploreView() {
         <ArrowLeft className="h-4 w-4" /> Back to home
       </button>
 
-      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold sm:text-3xl">Explore Campaigns</h1>
@@ -104,7 +116,6 @@ export function ExploreView() {
         </div>
       </div>
 
-      {/* Search & Filters */}
       <div className="mt-6 space-y-4">
         <form onSubmit={handleSearch} className="flex gap-2">
           <div className="relative flex-1">
@@ -119,7 +130,6 @@ export function ExploreView() {
           <Button type="submit" variant="outline" className="shrink-0">Search</Button>
         </form>
 
-        {/* Filter pills */}
         <div className="flex flex-wrap gap-2">
           {filters.map((f) => (
             <button
@@ -134,51 +144,65 @@ export function ExploreView() {
               {f.label}
             </button>
           ))}
+        </div>
 
-          {/* Category pills */}
-          <div className="w-full border-t pt-3">
-            <div className="flex flex-wrap gap-2">
+        {/* Category pills */}
+        <div className="w-full border-t pt-3">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                !selectedCategory ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/40'
+              }`}
+            >
+              All Categories
+            </button>
+            {categories.map((cat) => (
               <button
-                onClick={() => setSelectedCategory(null)}
+                key={cat.id}
+                onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
                 className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                  !selectedCategory ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/40'
+                  selectedCategory === cat.id ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/40'
                 }`}
               >
-                All Categories
-              </button>
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                    selectedCategory === cat.id ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/40'
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Sort */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Sort by:</span>
-            {[
-              { key: 'newest', label: 'Newest' },
-              { key: 'most_funded', label: 'Most Funded' },
-              { key: 'ending_soon', label: 'Ending Soon' },
-            ].map((s) => (
-              <button
-                key={s.key}
-                onClick={() => setSortBy(s.key)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  sortBy === s.key ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
-                }`}
-              >
-                {s.label}
+                {cat.name}
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Campaign type filters */}
+        <div className="w-full border-t pt-3">
+          <div className="flex flex-wrap gap-2">
+            <span className="text-xs text-muted-foreground self-center mr-1">Type:</span>
+            {typeFilters.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setActiveFilter(t.key === 'all' ? 'all' : `type_${t.key}`)}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                  activeFilter === `type_${t.key}` ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/40'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Sort */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Sort by:</span>
+          {sortOptions.map((s) => (
+            <button
+              key={s.key}
+              onClick={() => setSortBy(s.key)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                sortBy === s.key ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              {s.label}
+            </button>
+          ))}
         </div>
       </div>
 

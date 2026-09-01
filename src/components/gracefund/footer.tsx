@@ -11,11 +11,11 @@ const footerLinks = {
     { label: 'Pricing', action: 'home' as const },
   ],
   'Categories': [
-    { label: 'Medical', action: 'explore' as const },
+    { label: 'Medical & Health', action: 'explore' as const },
     { label: 'Education', action: 'explore' as const },
-    { label: 'Church & Ministry', action: 'explore' as const },
-    { label: 'Missions', action: 'explore' as const },
-    { label: 'Emergency', action: 'explore' as const },
+    { label: 'Community Projects', action: 'explore' as const },
+    { label: 'Emergency & Family', action: 'explore' as const },
+    { label: 'Charity & Nonprofits', action: 'explore' as const },
   ],
   'Support': [
     { label: 'Help Center', action: 'home' as const },
@@ -55,7 +55,7 @@ export function Footer() {
               </span>
             </div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Connecting the Christian community to people, families, churches, and ministries in need. Together, we turn generosity into real impact.
+              A trusted community crowdfunding platform connecting people, families, communities, and organizations to raise and give support when it matters most.
             </p>
             <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5">
@@ -88,7 +88,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 sm:flex-row">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} GraceFund. All rights reserved. Made with <Heart className="inline h-3 w-3 text-red-500" /> for the global Christian community.
+            &copy; {new Date().getFullYear()} GraceFund. All rights reserved. Made with <Heart className="inline h-3 w-3 text-red-500" /> for communities everywhere.
           </p>
           <div className="flex items-center gap-4">
             <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms</button>

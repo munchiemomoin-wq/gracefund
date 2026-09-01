@@ -16,12 +16,14 @@ import { toast } from 'sonner';
 
 const raiseForOptions = [
   { value: 'myself', label: 'Myself', icon: User, desc: 'You are raising funds for your own needs' },
-  { value: 'someone', label: 'Someone Else', icon: Users, desc: 'A friend, family member, or acquaintance' },
+  { value: 'someone', label: 'Someone Else', icon: Users, desc: 'A friend, colleague, or acquaintance' },
   { value: 'family', label: 'My Family', icon: Heart, desc: 'Your family needs support' },
-  { value: 'church', label: 'A Church', icon: Church, desc: 'A church building project or program' },
-  { value: 'ministry', label: 'A Ministry', icon: Globe, desc: 'A ministry or mission organization' },
-  { value: 'charity', label: 'A Charity', icon: Building, desc: 'A registered charity or NGO' },
-  { value: 'community', label: 'Community Project', icon: Users, desc: 'A community initiative or project' },
+  { value: 'friend', label: 'A Friend', icon: Users, desc: 'A friend who needs help' },
+  { value: 'community', label: 'A Community', icon: Users, desc: 'A community or neighborhood initiative' },
+  { value: 'nonprofit', label: 'A Nonprofit or Charity', icon: Building, desc: 'A registered charity or nonprofit organization' },
+  { value: 'organization', label: 'An Organization', icon: Building, desc: 'A company, trust, or other organization' },
+  { value: 'faith_org', label: 'A Faith-Based Organization', icon: Globe, desc: 'A church, ministry, or faith-based organization' },
+  { value: 'project', label: 'A Community Project', icon: Users, desc: 'A specific project or initiative' },
 ];
 
 export function CreateCampaignWizard() {
@@ -115,7 +117,7 @@ export function CreateCampaignWizard() {
           <h2 className="text-lg font-semibold">Select a Category</h2>
           <p className="text-sm text-muted-foreground">Choose the category that best fits your campaign</p>
           <div className="mt-4 grid grid-cols-2 gap-3">
-            {['Medical', 'Education', 'Church & Ministry', 'Missions', 'Emergency', 'Community', 'Funeral & Memorial', 'Children'].map((cat) => (
+            {['Medical & Health', 'Education', 'Emergency & Family', 'Funeral & Memorial', 'Children', 'Community Projects', 'Charity & Nonprofits', 'Faith & Religious Organizations'].map((cat) => (
               <button
                 key={cat}
                 onClick={() => update('categoryId', cat)}

@@ -148,13 +148,15 @@ export function AdminDashboard() {
     { icon: Flag, label: 'Reports' },
     { icon: Shield, label: 'Verification' },
     { icon: Star, label: 'Featured' },
+    { icon: Settings, label: 'Categories' },
+    { icon: Settings, label: 'Features' },
     { icon: Settings, label: 'Settings' },
   ];
 
   const pendingCampaigns = [
-    { title: 'Help Build a Well in Rural Village', category: 'Community', date: 'Sep 1, 2026' },
-    { title: 'Support Bible Distribution in Schools', category: 'Missions', date: 'Aug 31, 2026' },
-    { title: 'Medical Support for Elderly Widow', category: 'Medical', date: 'Aug 30, 2026' },
+    { title: 'Help Build a Well in Rural Village', category: 'Community Projects', date: 'Sep 1, 2026' },
+    { title: 'Support After- School Tutoring Program', category: 'Education', date: 'Aug 31, 2026' },
+    { title: 'Medical Support for Elderly Widow', category: 'Medical & Health', date: 'Aug 30, 2026' },
   ];
 
   return (

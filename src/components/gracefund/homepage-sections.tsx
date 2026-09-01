@@ -27,14 +27,14 @@ const categoryIcons: Record<string, React.ElementType> = {
 };
 
 const categoryColors: Record<string, string> = {
-  'medical': 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100',
+  'medical-health': 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100',
   'education': 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100',
-  'church-ministry': 'bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100',
-  'missions': 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100',
-  'emergency': 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100',
-  'community': 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100',
+  'emergency-family': 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100',
   'funeral-memorial': 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100',
   'children': 'bg-pink-50 text-pink-600 border-pink-200 hover:bg-pink-100',
+  'community-projects': 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100',
+  'charity-nonprofits': 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100',
+  'faith-religious': 'bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100',
 };
 
 interface Campaign {
@@ -207,7 +207,7 @@ export function HowItWorks() {
     {
       icon: Share2,
       title: 'Share With Your Community',
-      description: 'Share your campaign with friends, family, churches, and supporters through social media and messaging.',
+      description: 'Share your campaign with friends, family, and supporters through social media and messaging.',
     },
     {
       icon: Heart,
@@ -336,7 +336,7 @@ export function ImpactStats() {
   );
 }
 
-// Faith & Giving
+// Community & Giving
 export function FaithAndGiving() {
   const { setShowAuthModal } = useAppStore();
 
@@ -347,12 +347,12 @@ export function FaithAndGiving() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--gold)]/10">
             <HandHeart className="h-6 w-6 text-[var(--gold)]" />
           </div>
-          <h2 className="text-2xl font-bold sm:text-3xl">Where Faith Meets Generosity</h2>
+          <h2 className="text-2xl font-bold sm:text-3xl">Where Compassion Meets Action</h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            GraceFund is more than a platform. It is a community of believers coming together to support one another in times of need. Whether it is a medical emergency, a child&apos;s education, or rebuilding a church, every act of generosity reflects the love and compassion we are called to share.
+            GraceFund is more than a platform. It is a community of people coming together to support one another in times of need. Whether it is a medical emergency, a child&apos;s education, rebuilding a community center, or supporting a local charity, every act of generosity makes a real difference.
           </p>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            We believe that when people unite with purpose and faith, extraordinary things happen. Your support does not just provide financial assistance. It brings hope, encouragement, and the knowledge that someone cares.
+            We believe that when people unite with purpose, extraordinary things happen. Your support does not just provide financial assistance. It brings hope, encouragement, and the knowledge that someone cares.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Button

@@ -38,6 +38,7 @@ export function Header() {
           </div>
           <span className="text-xl font-bold tracking-tight text-foreground">
             Grace<span className="text-[var(--gold)]">Fund</span>
+            <span className="ml-2 hidden sm:inline text-xs font-normal text-muted-foreground">Giving Hope. Changing Lives.</span>
           </span>
         </button>
 

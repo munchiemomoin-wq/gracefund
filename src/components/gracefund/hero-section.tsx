@@ -27,7 +27,7 @@ export function HeroSection() {
           >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--gold)]/30 bg-[var(--gold)]/10 px-4 py-1.5 text-xs font-medium text-foreground/80">
               <Sparkles className="h-3 w-3 text-[var(--gold)]" />
-              Trusted by Christians worldwide
+              People Helping People
             </span>
           </motion.div>
 
@@ -49,7 +49,7 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl"
           >
-            Support individuals, families, churches, and ministries when they need it most.
+            Help people, families, communities, and meaningful causes raise the support they need.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -109,9 +109,9 @@ export function HeroSection() {
           <div className="relative w-full max-w-4xl">
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
               {[
-                { img: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=300&fit=crop', label: 'Education' },
+                { img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop', label: 'Families' },
                 { img: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400&h=300&fit=crop', label: 'Medical' },
-                { img: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=400&h=300&fit=crop', label: 'Community' },
+                { img: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&h=300&fit=crop', label: 'Volunteers' },
               ].map((item, i) => (
                 <motion.div
                   key={i}

@@ -218,13 +218,13 @@ export function DonationModal() {
               <div>
                 <Label>Leave a Message (Optional)</Label>
                 <Textarea
-                  placeholder="Share a word of encouragement, a prayer, or a note of support..."
+                  placeholder="Share a word of encouragement, support, or a note of solidarity..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="mt-1.5 min-h-[100px] resize-none"
                 />
                 <p className="mt-1.5 text-xs text-muted-foreground italic">
-                  &quot;Praying for you and your family.&quot;
+                  &quot;Thinking of you during this time.&quot;
                 </p>
               </div>
               <div className="flex gap-2">
@@ -242,9 +242,9 @@ export function DonationModal() {
           {step === 4 && (
             <div className="space-y-4">
               {/* Support GraceFund */}
-              <div className="rounded-xl border border-[var(--gold)]/30 bg-[var(--gold)]/5 p-4">
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
                 <div className="flex items-center gap-2 text-sm font-medium">
-                  <Gift className="h-4 w-4 text-[var(--gold)]" />
+                  <Gift className="h-4 w-4 text-primary" />
                   Support GraceFund
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">

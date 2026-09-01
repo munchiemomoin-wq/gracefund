@@ -50,6 +50,8 @@ model Campaign {
   verificationLevel String @default("none")
   isFeatured      Boolean   @default(false)
   isUrgent        Boolean   @default(false)
+  campaignType    String    @default("individual") // individual, family, community, organization, charity, faith_based
+  campaignFeatures String?   // JSON: { prayer_support, donor_messages, anonymous_donations, campaign_updates, beneficiary_verification }
   coverImage      String?
   videoUrl        String?
   endDate         DateTime?
@@ -104,7 +106,7 @@ model Organization {
   id                  String    @id @default(cuid())
   ownerId             String    @unique
   name                String
-  type                String    // church, ministry, mission_org, ngo, charity
+  type                String    // church, ministry, mission_org, ngo, charity, nonprofit, community_org, social_org
   description         String?
   logoUrl             String?
   coverImageUrl       String?
