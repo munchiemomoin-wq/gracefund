@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  phone         String?
+  avatarUrl     String?
+  role          String    @default("visitor") // visitor, donor, fundraiser, organization, admin
+  status        String    @default("active") // active, suspended, banned
+  verificationLevel String @default("none") // none, basic, identity, organization
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  campaigns     Campaign[]
+  donations     Donation[]
+  organization  Organization?
+  withdrawalRequests WithdrawalRequest[]
+  reports       Report[]
+  auditLogs     AuditLog[]
+  prayers       Prayer[]
+  favorites     Favorite[]
+}
+
+model Campaign {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  title           String
+  shortDescription String?
+  story           String?
+  categoryId      String?
+  organizerId     String?
+  beneficiaryName String?
+  beneficiaryRelationship String?
+  beneficiaryContact String?
+  countryId       String?
+  stateId         String?
+  cityId          String?
+  goalAmount      Float
+  raisedAmount    Float     @default(0)
+  currency        String    @default("INR")
+  status          String    @default("draft") // draft, pending_review, approved, published, paused, rejected, completed, closed, under_investigation
+  verificationLevel String @default("none")
+  isFeatured      Boolean   @default(false)
+  isUrgent        Boolean   @default(false)
+  coverImage      String?
+  videoUrl        String?
+  endDate         DateTime?
+  donorCount      Int       @default(0)
+  viewCount       Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  category        Category? @relation(fields: [categoryId], references: [id])
+  organizer       User?     @relation(fields: [organizerId], references: [id])
+  donations       Donation[]
+  updates         CampaignUpdate[]
+  withdrawalRequests WithdrawalRequest[]
+  reports         Report[]
+  prayers         Prayer[]
+  favorites       Favorite[]
+}
+
+model Donation {
+  id                  String    @id @default(cuid())
+  campaignId          String
+  donorId             String?
+  donorName           String?
+  donorEmail          String?
+  amount              Float
+  currency            String    @default("INR")
+  platformFee         Float     @default(0)
+  paymentStatus       String    @default("pending") // pending, completed, failed, refunded
+  paymentProvider     String?
+  transactionReference String?
+  donorMessage        String?
+  isAnonymous         Boolean   @default(false)
+  showNamePublicly    Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+
+  campaign            Campaign  @relation(fields: [campaignId], references: [id])
+  donor               User?     @relation(fields: [donorId], references: [id])
+}
+
+model CampaignUpdate {
+  id        String   @id @default(cuid())
+  campaignId String
+  title     String
+  content   String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+
+  campaign  Campaign @relation(fields: [campaignId], references: [id])
+}
+
+model Organization {
+  id                  String    @id @default(cuid())
+  ownerId             String    @unique
+  name                String
+  type                String    // church, ministry, mission_org, ngo, charity
+  description         String?
+  logoUrl             String?
+  coverImageUrl       String?
+  website             String?
+  country             String?
+  city                String?
+  registrationInfo    String?
+  verificationStatus  String    @default("pending") // pending, verified, rejected
+  socialLinks         String?   // JSON string
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  owner               User      @relation(fields: [ownerId], references: [id])
+}
+
+model WithdrawalRequest {
+  id            String    @id @default(cuid())
+  campaignId    String
+  requesterId   String
+  amount        Float
+  status        String    @default("requested") // requested, under_review, approved, processing, paid, rejected
+  bankDetails   String?   // JSON string - sensitive
+  rejectionReason String?
+  requestedAt   DateTime  @default(now())
+  processedAt   DateTime?
+
+  campaign      Campaign  @relation(fields: [campaignId], references: [id])
+  requester     User      @relation(fields: [requesterId], references: [id])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  campaignId  String
+  reporterId  String
+  reason      String
+  description String?
+  status      String   @default("pending") // pending, reviewed, resolved, dismissed
+  createdAt   DateTime @default(now())
+
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  reporter    User     @relation(fields: [reporterId], references: [id])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  icon        String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+
+  campaigns   Campaign[]
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  adminId     String?
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    String?  // JSON string
+  createdAt   DateTime @default(now())
+
+  admin       User?    @relation(fields: [adminId], references: [id])
+}
+
+model Prayer {
+  id          String   @id @default(cuid())
+  campaignId  String
+  userId      String?
+  createdAt   DateTime @default(now())
+
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+}
+
+model Favorite {
+  id          String   @id @default(cuid())
+  campaignId  String
+  userId      String?
+  createdAt   DateTime @default(now())
+
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+}
+
+model PlatformSettings {
+  id                  String   @id @default(cuid())
+  key                 String   @unique
+  value               String?
+  updatedAt           DateTime @updatedAt
+}
+
+model Country {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  currency    String?
+  currencySymbol String?
+  active      Boolean  @default(true)
+
+  states      State[]
+}
+
+model State {
+  id          String   @id @default(cuid())
+  name        String
+  countryId   String
+  code        String?
+
+  country     Country  @relation(fields: [countryId], references: [id])
+  cities      City[]
+}
+
+model City {
+  id          String   @id @default(cuid())
+  name        String
+  stateId     String
+
+  state       State    @relation(fields: [stateId], references: [id])
+}
