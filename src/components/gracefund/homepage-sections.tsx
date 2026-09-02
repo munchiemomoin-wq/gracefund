@@ -4,37 +4,40 @@ import { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/app-store';
 import { CampaignCard } from './campaign-card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { formatCompactCurrency, formatNumber, formatCurrency, getProgressPercent } from '@/lib/currency';
 import { motion } from 'framer-motion';
 import {
-  HeartPulse, GraduationCap, Church, Globe, AlertTriangle, Users, Flower2, Baby,
+  HeartPulse, GraduationCap, Globe, AlertTriangle, Users, Flower2, Baby,
   ArrowRight, Search, SlidersHorizontal, FileText, Share2, Heart, Lightbulb,
-  TrendingUp, MapPin, Sparkles, HandHeart, Shield,
+  TrendingUp, MapPin, Sparkles, HandHeart, Shield, Home, PawPrint, CloudRain,
 } from 'lucide-react';
 
 const categoryIcons: Record<string, React.ElementType> = {
   'heart-pulse': HeartPulse,
   'graduation-cap': GraduationCap,
-  'church': Church,
   'globe': Globe,
   'alert-triangle': AlertTriangle,
   'users': Users,
   'flower-2': Flower2,
   'baby': Baby,
+  'home': Home,
+  'paw-print': PawPrint,
+  'cloud-rain': CloudRain,
 };
 
 const categoryColors: Record<string, string> = {
   'medical-health': 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100',
   'education': 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100',
-  'emergency-family': 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100',
+  'emergency': 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100',
+  'family-personal': 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100',
   'funeral-memorial': 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100',
   'children': 'bg-pink-50 text-pink-600 border-pink-200 hover:bg-pink-100',
-  'community-projects': 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100',
-  'charity-nonprofits': 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100',
-  'faith-religious': 'bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100',
+  'community': 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100',
+  'charity-nonprofit': 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100',
+  'animal-welfare': 'bg-violet-50 text-violet-600 border-violet-200 hover:bg-violet-100',
+  'disaster-relief': 'bg-sky-50 text-sky-600 border-sky-200 hover:bg-sky-100',
 };
 
 interface Campaign {
@@ -52,7 +55,7 @@ interface Campaign {
   endDate: string | null;
   category?: { name: string; icon: string; slug: string } | null;
   organizer?: { name: string | null } | null;
-  _count?: { donations: number; prayers: number };
+  _count?: { donations: number };
 }
 
 interface Category {
@@ -116,7 +119,7 @@ export function BrowseByCause({ categories }: { categories: Category[] }) {
           <h2 className="text-2xl font-bold sm:text-3xl">Browse by Cause</h2>
           <p className="mt-1.5 text-muted-foreground">Find campaigns that match your passion to help</p>
         </div>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {categories.map((cat) => {
             const Icon = categoryIcons[cat.icon] || HeartPulse;
             const colorClass = categoryColors[cat.slug] || 'bg-muted text-muted-foreground border-border hover:bg-muted/80';
@@ -302,7 +305,7 @@ export function ImpactStats() {
       .then(setStats)
       .catch(() => {
         // Fallback demo data
-        setStats({ totalRaised: 2685200, peopleHelped: 1368, activeCampaigns: 7, countriesReached: 8 });
+        setStats({ totalRaised: 2810700, peopleHelped: 1368, activeCampaigns: 9, countriesReached: 8 });
       });
   }, []);
 
@@ -336,8 +339,8 @@ export function ImpactStats() {
   );
 }
 
-// Community & Giving
-export function FaithAndGiving() {
+// Community CTA Section
+export function CommunityCta() {
   const { setShowAuthModal } = useAppStore();
 
   return (
@@ -349,7 +352,7 @@ export function FaithAndGiving() {
           </div>
           <h2 className="text-2xl font-bold sm:text-3xl">Where Compassion Meets Action</h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            GraceFund is more than a platform. It is a community of people coming together to support one another in times of need. Whether it is a medical emergency, a child&apos;s education, rebuilding a community center, or supporting a local charity, every act of generosity makes a real difference.
+            GraceFund is more than a platform. It is a community of people coming together to support one another in times of need. Whether it is a medical emergency, a child&apos;s education, rebuilding after a disaster, or supporting a local charity, every act of generosity makes a real difference.
           </p>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
             We believe that when people unite with purpose, extraordinary things happen. Your support does not just provide financial assistance. It brings hope, encouragement, and the knowledge that someone cares.

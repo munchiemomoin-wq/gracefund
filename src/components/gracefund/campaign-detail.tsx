@@ -9,18 +9,10 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   ArrowLeft, MapPin, Users, Shield, Clock, AlertTriangle, Heart,
-  Share2, Copy, Check, HandHeart, Calendar, Link2,
+  Share2, Copy, Check, Calendar, Link2,
 } from 'lucide-react';
 import { formatCurrency, getProgressPercent, getDaysRemaining } from '@/lib/currency';
 import { motion } from 'framer-motion';
-
-function parseFeatures(featuresStr: string | null): Record<string, boolean> {
-  try {
-    return featuresStr ? JSON.parse(featuresStr) : {};
-  } catch (_e) {
-    return {};
-  }
-}
 
 interface CampaignDetail {
   id: string;
@@ -47,58 +39,13 @@ interface CampaignDetail {
   organizer?: { id: string; name: string | null; avatarUrl: string | null; role: string } | null;
   updates?: Array<{ id: string; title: string; content: string | null; imageUrl: string | null; createdAt: string }>;
   donations?: Array<{ id: string; donorName: string; amount: number; currency: string; donorMessage: string | null; isAnonymous: boolean; showNamePublicly: boolean; createdAt: string }>;
-  _count?: { donations: number; prayers: number; favorites: number };
-}
-
-function SupportButton({ campaign, prayed, setPrayed, prayerCount, setPrayerCount, supported, setSupported, supportCount, setSupportCount }: {
-  campaign: CampaignDetail; prayed: boolean; setPrayed: (v: boolean) => void; prayerCount: number; setPrayerCount: (v: number) => void; supported: boolean; setSupported: (v: boolean) => void; supportCount: number; setSupportCount: (v: number) => void;
-}) {
-  const features = parseFeatures(campaign.campaignFeatures);
-  const showPrayer = features.prayer_support === true;
-
-  if (showPrayer) {
-    return (
-      <>
-        <button
-          onClick={() => { setPrayed(!prayed); setPrayerCount(prayed ? prayerCount - 1 : prayerCount + 1); }}
-          className={`flex w-full items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-all ${
-            prayed ? 'border-[var(--gold)] bg-[var(--gold)]/10 text-[var(--gold)]' : 'text-muted-foreground hover:bg-muted'
-          }`}
-        >
-          <HandHeart className={`h-4 w-4 ${prayed ? 'fill-current' : ''}`} />
-          I Prayed for This
-        </button>
-        <p className="mt-1 text-center text-xs text-muted-foreground">
-          {prayerCount} {prayerCount === 1 ? 'person is' : 'people are'} praying for this cause.
-        </p>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <button
-        onClick={() => { setSupported(!supported); setSupportCount(supported ? supportCount - 1 : supportCount + 1); }}
-        className={`flex w-full items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-all ${
-          supported ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
-        }`}
-      >
-        <Heart className={`h-4 w-4 ${supported ? 'fill-current' : ''}`} />
-        {supported ? 'Showing Support' : 'Show Support'}
-      </button>
-      <p className="mt-1 text-center text-xs text-muted-foreground">
-        {supportCount} {supportCount === 1 ? 'person is' : 'people are'} supporting this cause.
-      </p>
-    </>
-  );
+  _count?: { donations: number; favorites: number };
 }
 
 export function CampaignDetail() {
   const { selectedCampaignSlug, setCurrentView, setShowDonationModal } = useAppStore();
   const [campaign, setCampaign] = useState<CampaignDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [prayed, setPrayed] = useState(false);
-  const [prayerCount, setPrayerCount] = useState(0);
   const [supported, setSupported] = useState(false);
   const [supportCount, setSupportCount] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -112,7 +59,6 @@ export function CampaignDetail() {
       .then((data) => {
         if (!cancelled) {
           setCampaign(data);
-          setPrayerCount(data._count?.prayers || 0);
           setSupportCount(data.donorCount || 0);
           setLoading(false);
         }
@@ -299,8 +245,19 @@ export function CampaignDetail() {
 
               <Separator className="my-4" />
 
-              {/* Support / Prayer button - conditional based on campaign features */}
-              <SupportButton campaign={campaign} prayed={prayed} setPrayed={setPrayed} prayerCount={prayerCount} setPrayerCount={setPrayerCount} supported={supported} setSupported={setSupported} supportCount={supportCount} setSupportCount={setSupportCount} />
+              {/* Show Your Support button */}
+              <button
+                onClick={() => { setSupported(!supported); setSupportCount(supported ? supportCount - 1 : supportCount + 1); }}
+                className={`flex w-full items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-all ${
+                  supported ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                <Heart className={`h-4 w-4 ${supported ? 'fill-current' : ''}`} />
+                {supported ? 'Showing Support' : 'Show Your Support'}
+              </button>
+              <p className="mt-1 text-center text-xs text-muted-foreground">
+                {supportCount} {supportCount === 1 ? 'person is' : 'people are'} supporting this cause.
+              </p>
 
               <Separator className="my-4" />
 

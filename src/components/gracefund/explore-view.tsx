@@ -23,7 +23,7 @@ interface Campaign {
   endDate: string | null;
  category?: { name: string; icon: string; slug: string } | null;
   organizer?: { name: string | null } | null;
-  _count?: { donations: number; prayers: number };
+  _count?: { donations: number };
 }
 
 interface Category {
@@ -38,9 +38,8 @@ const typeFilters = [
   { key: 'individual', label: 'Individual' },
   { key: 'family', label: 'Family' },
   { key: 'community', label: 'Community' },
-  { key: 'charity', label: 'Charity' },
-  { key: 'faith_based', label: 'Faith-Based' },
   { key: 'organization', label: 'Organization' },
+  { key: 'charity', label: 'Charity' },
 ];
 
 export function ExploreView() {

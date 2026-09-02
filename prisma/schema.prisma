@@ -25,7 +25,6 @@ model User {
   withdrawalRequests WithdrawalRequest[]
   reports       Report[]
   auditLogs     AuditLog[]
-  prayers       Prayer[]
   favorites     Favorite[]
 }
 
@@ -50,8 +49,8 @@ model Campaign {
   verificationLevel String @default("none")
   isFeatured      Boolean   @default(false)
   isUrgent        Boolean   @default(false)
-  campaignType    String    @default("individual") // individual, family, community, organization, charity, faith_based
-  campaignFeatures String?   // JSON: { prayer_support, donor_messages, anonymous_donations, campaign_updates, beneficiary_verification }
+  campaignType    String    @default("individual") // individual, family, community, organization, charity
+  campaignFeatures String?   // JSON: { donor_messages, anonymous_donations, campaign_updates, beneficiary_verification, fund_usage }
   coverImage      String?
   videoUrl        String?
   endDate         DateTime?
@@ -66,7 +65,6 @@ model Campaign {
   updates         CampaignUpdate[]
   withdrawalRequests WithdrawalRequest[]
   reports         Report[]
-  prayers         Prayer[]
   favorites       Favorite[]
 }
 
@@ -106,7 +104,7 @@ model Organization {
   id                  String    @id @default(cuid())
   ownerId             String    @unique
   name                String
-  type                String    // church, ministry, mission_org, ngo, charity, nonprofit, community_org, social_org
+  type                String    // nonprofit, charity, ngo, community_org, social_enterprise, educational_org, healthcare_org, animal_welfare_org, other
   description         String?
   logoUrl             String?
   coverImageUrl       String?
@@ -174,15 +172,7 @@ model AuditLog {
   admin       User?    @relation(fields: [adminId], references: [id])
 }
 
-model Prayer {
-  id          String   @id @default(cuid())
-  campaignId  String
-  userId      String?
-  createdAt   DateTime @default(now())
 
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-  user        User?    @relation(fields: [userId], references: [id])
-}
 
 model Favorite {
   id          String   @id @default(cuid())

@@ -4,7 +4,7 @@ import { useAppStore } from '@/store/app-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Heart, DollarSign, FileText, Users, TrendingUp, Eye, Clock, AlertCircle, CheckCircle, BarChart3, Settings, Shield, Star, Flag, CreditCard, Globe, MessageSquare, Bell } from 'lucide-react';
+import { ArrowLeft, Heart, DollarSign, FileText, Users, TrendingUp, Eye, Clock, AlertCircle, CheckCircle, BarChart3, Settings, Shield, Star, Flag, CreditCard, Globe, Bell, Lock, Scale } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { formatCurrency } from '@/lib/currency';
 
@@ -33,12 +33,12 @@ export function DonorDashboard() {
             <CardContent className="p-0">
               <div className="divide-y">
                 {[
-                  { title: 'Help a Child Continue Her Education', amount: '₹2,500', date: 'Aug 28, 2026', status: 'Completed' },
-                  { title: 'Emergency Medical Support for a Family', amount: '₹5,000', date: 'Aug 25, 2026', status: 'Completed' },
-                  { title: 'Help Rebuild a Church After a Storm', amount: '₹1,000', date: 'Aug 20, 2026', status: 'Completed' },
-                  { title: 'Provide School Bags for Children', amount: '₹10,000', date: 'Aug 15, 2026', status: 'Completed' },
-                  { title: 'Community Food Distribution Program', amount: '₹5,000', date: 'Aug 10, 2026', status: 'Completed' },
-                  { title: 'Support Mission Work in Rural Communities', amount: '₹1,000', date: 'Aug 5, 2026', status: 'Completed' },
+                  { title: 'Help a Student Continue Her Education', amount: '₹2,500', date: 'Aug 28, 2026', status: 'Completed' },
+                  { title: 'Emergency Medical Treatment for a Father', amount: '₹5,000', date: 'Aug 25, 2026', status: 'Completed' },
+                  { title: 'Support a Family After a House Fire', amount: '₹1,000', date: 'Aug 20, 2026', status: 'Completed' },
+                  { title: 'Provide School Supplies for Children', amount: '₹10,000', date: 'Aug 15, 2026', status: 'Completed' },
+                  { title: 'Community Food Distribution Project', amount: '₹5,000', date: 'Aug 10, 2026', status: 'Completed' },
+                  { title: 'Animal Rescue and Veterinary Care', amount: '₹1,000', date: 'Aug 5, 2026', status: 'Completed' },
                 ].map((d, i) => (
                   <div key={i} className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors">
                     <div className="min-w-0 flex-1">
@@ -71,8 +71,8 @@ export function FundraiserDashboard() {
   const { setCurrentView } = useAppStore();
 
   const myCampaigns = [
-    { title: 'Help a Child Continue Her Education', raised: 32500, goal: 50000, donors: 87, status: 'Published', views: 2340 },
-    { title: 'Community Food Distribution Program', raised: 234000, goal: 600000, donors: 178, status: 'Published', views: 3120 },
+    { title: 'Help a Student Continue Her Education', raised: 32500, goal: 50000, donors: 87, status: 'Published', views: 2340 },
+    { title: 'Community Food Distribution Project', raised: 234000, goal: 600000, donors: 178, status: 'Published', views: 3120 },
   ];
 
   return (
@@ -145,17 +145,19 @@ export function AdminDashboard() {
     { icon: Users, label: 'Users' },
     { icon: Globe, label: 'Organizations' },
     { icon: DollarSign, label: 'Withdrawals' },
-    { icon: Flag, label: 'Reports' },
-    { icon: Shield, label: 'Verification' },
-    { icon: Star, label: 'Featured' },
     { icon: Settings, label: 'Categories' },
-    { icon: Settings, label: 'Features' },
-    { icon: Settings, label: 'Settings' },
+    { icon: Shield, label: 'Verification' },
+    { icon: Flag, label: 'Reports' },
+    { icon: Star, label: 'Featured' },
+    { icon: Scale, label: 'Compliance' },
+    { icon: Lock, label: 'Payment Settings' },
+    { icon: Settings, label: 'Platform Settings' },
+    { icon: Bell, label: 'Audit Logs' },
   ];
 
   const pendingCampaigns = [
-    { title: 'Help Build a Well in Rural Village', category: 'Community Projects', date: 'Sep 1, 2026' },
-    { title: 'Support After- School Tutoring Program', category: 'Education', date: 'Aug 31, 2026' },
+    { title: 'Help Build a Well in Rural Village', category: 'Community', date: 'Sep 1, 2026' },
+    { title: 'Support After-School Tutoring Program', category: 'Education', date: 'Aug 31, 2026' },
     { title: 'Medical Support for Elderly Widow', category: 'Medical & Health', date: 'Aug 30, 2026' },
   ];
 
@@ -193,9 +195,9 @@ export function AdminDashboard() {
           {/* Stats */}
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: FileText, label: 'Total Campaigns', value: '7', change: '+2 this week' },
-              { icon: DollarSign, label: 'Total Raised', value: '₹26.85L', change: '+₹45K today' },
-              { icon: Users, label: 'Total Users', value: '8', change: '+3 this week' },
+              { icon: FileText, label: 'Total Campaigns', value: '9', change: '+2 this week' },
+              { icon: DollarSign, label: 'Total Raised', value: '₹28.11L', change: '+₹45K today' },
+              { icon: Users, label: 'Total Users', value: '9', change: '+3 this week' },
               { icon: AlertCircle, label: 'Pending Reviews', value: '3', change: 'Needs attention' },
             ].map((s) => (
               <Card key={s.label}><CardContent className="p-5"><div className="flex items-center justify-between"><p className="text-xs text-muted-foreground">{s.label}</p><s.icon className="h-4 w-4 text-muted-foreground" /></div><p className="mt-2 text-2xl font-bold">{s.value}</p><p className="mt-1 text-xs text-emerald-600">{s.change}</p></CardContent></Card>

@@ -23,7 +23,7 @@ interface Campaign {
   endDate: string | null;
   category?: { name: string; icon: string } | null;
   organizer?: { name: string | null } | null;
-  _count?: { donations: number; prayers: number };
+  _count?: { donations: number };
 }
 
 interface CampaignCardProps {

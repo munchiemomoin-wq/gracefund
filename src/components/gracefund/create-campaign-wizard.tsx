@@ -10,7 +10,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, Check, Upload, Sparkles, User, Users, Church, Globe, Building, Heart } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Upload, Sparkles, User, Users, Globe, Building, Heart, Baby, PawPrint } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 
@@ -19,10 +19,12 @@ const raiseForOptions = [
   { value: 'someone', label: 'Someone Else', icon: Users, desc: 'A friend, colleague, or acquaintance' },
   { value: 'family', label: 'My Family', icon: Heart, desc: 'Your family needs support' },
   { value: 'friend', label: 'A Friend', icon: Users, desc: 'A friend who needs help' },
+  { value: 'child', label: 'A Child', icon: Baby, desc: 'A child who needs support' },
   { value: 'community', label: 'A Community', icon: Users, desc: 'A community or neighborhood initiative' },
-  { value: 'nonprofit', label: 'A Nonprofit or Charity', icon: Building, desc: 'A registered charity or nonprofit organization' },
+  { value: 'charity', label: 'A Charity', icon: Globe, desc: 'A registered charity' },
+  { value: 'ngo', label: 'An NGO', icon: Building, desc: 'A non-governmental organization' },
+  { value: 'nonprofit', label: 'A Nonprofit', icon: Building, desc: 'A nonprofit organization' },
   { value: 'organization', label: 'An Organization', icon: Building, desc: 'A company, trust, or other organization' },
-  { value: 'faith_org', label: 'A Faith-Based Organization', icon: Globe, desc: 'A church, ministry, or faith-based organization' },
   { value: 'project', label: 'A Community Project', icon: Users, desc: 'A specific project or initiative' },
 ];
 
@@ -117,7 +119,7 @@ export function CreateCampaignWizard() {
           <h2 className="text-lg font-semibold">Select a Category</h2>
           <p className="text-sm text-muted-foreground">Choose the category that best fits your campaign</p>
           <div className="mt-4 grid grid-cols-2 gap-3">
-            {['Medical & Health', 'Education', 'Emergency & Family', 'Funeral & Memorial', 'Children', 'Community Projects', 'Charity & Nonprofits', 'Faith & Religious Organizations'].map((cat) => (
+            {['Medical & Health', 'Education', 'Emergency', 'Family & Personal', 'Funeral & Memorial', 'Children', 'Community', 'Charity & Nonprofit', 'Animal Welfare', 'Disaster Relief'].map((cat) => (
               <button
                 key={cat}
                 onClick={() => update('categoryId', cat)}

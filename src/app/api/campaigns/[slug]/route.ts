@@ -18,7 +18,7 @@ export async function GET(
           orderBy: { createdAt: 'desc' },
           take: 20,
         },
-        _count: { select: { donations: true, prayers: true, favorites: true } },
+        _count: { select: { donations: true, favorites: true } },
       },
     });
 

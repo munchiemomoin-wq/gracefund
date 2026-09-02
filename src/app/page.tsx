@@ -7,7 +7,7 @@ import { Footer } from '@/components/gracefund/footer';
 import { HeroSection } from '@/components/gracefund/hero-section';
 import {
   PopularCampaigns, BrowseByCause, UrgentCampaigns,
-  VerifiedCampaigns, HowItWorks, ImpactStats, FaithAndGiving,
+  VerifiedCampaigns, HowItWorks, ImpactStats, CommunityCta,
 } from '@/components/gracefund/homepage-sections';
 import { CampaignDetail } from '@/components/gracefund/campaign-detail';
 import { ExploreView } from '@/components/gracefund/explore-view';
@@ -31,7 +31,7 @@ interface Campaign {
   endDate: string | null;
   category?: { name: string; icon: string; slug: string } | null;
   organizer?: { name: string | null } | null;
-  _count?: { donations: number; prayers: number };
+  _count?: { donations: number };
 }
 
 interface Category {
@@ -76,7 +76,7 @@ export default function HomePage() {
             {!loading && <VerifiedCampaigns campaigns={campaigns} />}
             <HowItWorks />
             <ImpactStats />
-            <FaithAndGiving />
+            <CommunityCta />
           </>
         )}
 

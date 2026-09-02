@@ -36,7 +36,7 @@ export async function GET(request: Request) {
       include: {
         category: true,
         organizer: { select: { id: true, name: true, avatarUrl: true } },
-        _count: { select: { donations: true, prayers: true } },
+        _count: { select: { donations: true } },
       },
     });
 

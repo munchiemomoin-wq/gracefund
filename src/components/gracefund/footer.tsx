@@ -13,9 +13,9 @@ const footerLinks = {
   'Categories': [
     { label: 'Medical & Health', action: 'explore' as const },
     { label: 'Education', action: 'explore' as const },
-    { label: 'Community Projects', action: 'explore' as const },
-    { label: 'Emergency & Family', action: 'explore' as const },
-    { label: 'Charity & Nonprofits', action: 'explore' as const },
+    { label: 'Emergency', action: 'explore' as const },
+    { label: 'Community', action: 'explore' as const },
+    { label: 'Charity & Nonprofit', action: 'explore' as const },
   ],
   'Support': [
     { label: 'Help Center', action: 'home' as const },
