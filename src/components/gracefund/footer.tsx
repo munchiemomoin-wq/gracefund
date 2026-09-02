@@ -19,7 +19,7 @@ const footerLinks = {
   ],
   'Support': [
     { label: 'Help Center', action: 'home' as const },
-    { label: 'Trust & Safety', action: 'home' as const },
+    { label: 'Trust & Safety', action: 'trust-safety' as const },
     { label: 'Contact Us', action: 'home' as const },
     { label: 'Privacy Policy', action: 'home' as const },
   ],
@@ -33,6 +33,9 @@ export function Footer() {
       setShowAuthModal(true, 'register');
     } else if (action === 'explore') {
       setCurrentView('explore');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (action === 'trust-safety') {
+      setCurrentView('trust-safety');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       setCurrentView('home');

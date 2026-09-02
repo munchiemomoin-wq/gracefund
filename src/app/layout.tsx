@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "GraceFund — Giving Hope. Changing Lives.",
   description: "GraceFund is a trusted community crowdfunding platform where people, families, communities, organizations, and meaningful causes can come together to raise and give support when it matters most.",
-  keywords: ["crowdfunding in India", "medical fundraising", "education fundraising", "emergency fundraising", "funeral fundraising", "community crowdfunding", "charity fundraising", "NGO fundraising", "crowdfunding for families", "crowdfunding for students", "GraceFund", "nonprofit fundraising", "animal welfare fundraising", "disaster relief crowdfunding"],
+  keywords: ["crowdfunding in India", "trusted crowdfunding", "medical fundraising", "education fundraising", "emergency fundraising", "funeral fundraising", "community crowdfunding", "charity fundraising", "NGO fundraising", "crowdfunding for families", "crowdfunding for students", "GraceFund", "nonprofit fundraising", "animal welfare fundraising", "disaster relief crowdfunding", "secure crowdfunding", "verified fundraisers", "transparent donations", "crowdfunding with verification"],
   authors: [{ name: "GraceFund" }],
   icons: { icon: "/logo.svg" },
   openGraph: {

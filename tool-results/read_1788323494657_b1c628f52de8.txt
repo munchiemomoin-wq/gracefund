@@ -1,0 +1,301 @@
+     1→     1→import { PrismaClient } from '@prisma/client';
+     2→     2→
+     3→     3→const prisma = new PrismaClient();
+     4→     4→
+     5→     5→async function main() {
+     6→     6→  // Clear existing data
+     7→     7→  await prisma.favorite.deleteMany();
+     8→     8→  await prisma.donation.deleteMany();
+     9→     9→  await prisma.campaignUpdate.deleteMany();
+    10→    10→  await prisma.report.deleteMany();
+    11→    11→  await prisma.withdrawalRequest.deleteMany();
+    12→    12→  await prisma.campaign.deleteMany();
+    13→    13→  await prisma.organization.deleteMany();
+    14→    14→  await prisma.auditLog.deleteMany();
+    15→    15→  await prisma.user.deleteMany();
+    16→    16→  await prisma.category.deleteMany();
+    17→    17→  await prisma.platformSettings.deleteMany();
+    18→    18→  await prisma.city.deleteMany();
+    19→    19→  await prisma.state.deleteMany();
+    20→    20→  await prisma.country.deleteMany();
+    21→    21→
+    22→    22→  // Create Countries
+    23→    23→  const india = await prisma.country.create({ data: { name: 'India', code: 'IN', currency: 'INR', currencySymbol: '₹' } });
+    24→    24→  await prisma.country.create({ data: { name: 'United States', code: 'US', currency: 'USD', currencySymbol: '$' } });
+    25→    25→  await prisma.country.create({ data: { name: 'United Kingdom', code: 'GB', currency: 'GBP', currencySymbol: '£' } });
+    26→    26→  await prisma.country.create({ data: { name: 'United Arab Emirates', code: 'AE', currency: 'AED', currencySymbol: 'د.إ' } });
+    27→    27→  await prisma.country.create({ data: { name: 'Nigeria', code: 'NG', currency: 'NGN', currencySymbol: '₦' } });
+    28→    28→  await prisma.country.create({ data: { name: 'Kenya', code: 'KE', currency: 'KES', currencySymbol: 'KSh' } });
+    29→    29→  await prisma.country.create({ data: { name: 'Philippines', code: 'PH', currency: 'PHP', currencySymbol: '₱' } });
+    30→    30→  await prisma.country.create({ data: { name: 'Brazil', code: 'BR', currency: 'BRL', currencySymbol: 'R$' } });
+    31→    31→
+    32→    32→  // Create States for India
+    33→    33→  const telangana = await prisma.state.create({ data: { name: 'Telangana', countryId: india.id, code: 'TG' } });
+    34→    34→  const andhra = await prisma.state.create({ data: { name: 'Andhra Pradesh', countryId: india.id, code: 'AP' } });
+    35→    35→  const karnataka = await prisma.state.create({ data: { name: 'Karnataka', countryId: india.id, code: 'KA' } });
+    36→    36→  const tamilNadu = await prisma.state.create({ data: { name: 'Tamil Nadu', countryId: india.id, code: 'TN' } });
+    37→    37→  const maharashtra = await prisma.state.create({ data: { name: 'Maharashtra', countryId: india.id, code: 'MH' } });
+    38→    38→
+    39→    39→  // Create Cities
+    40→    40→  const hyd = await prisma.city.create({ data: { name: 'Hyderabad', stateId: telangana.id } });
+    41→    41→  await prisma.city.create({ data: { name: 'Warangal', stateId: telangana.id } });
+    42→    42→  const vizag = await prisma.city.create({ data: { name: 'Visakhapatnam', stateId: andhra.id } });
+    43→    43→  await prisma.city.create({ data: { name: 'Vijayawada', stateId: andhra.id } });
+    44→    44→  const blr = await prisma.city.create({ data: { name: 'Bangalore', stateId: karnataka.id } });
+    45→    45→  const chennai = await prisma.city.create({ data: { name: 'Chennai', stateId: tamilNadu.id } });
+    46→    46→  const mumbai = await prisma.city.create({ data: { name: 'Mumbai', stateId: maharashtra.id } });
+    47→    47→
+    48→    48→  // Create Categories (10 inclusive, secular categories)
+    49→    49→  const categories = await Promise.all([
+    50→    50→    prisma.category.create({ data: { name: 'Medical & Health', slug: 'medical-health', description: 'Medical treatment, hospital expenses, surgery, emergency medical care, recovery, and disability support', icon: 'heart-pulse', sortOrder: 1 } }),
+    51→    51→    prisma.category.create({ data: { name: 'Education', slug: 'education', description: 'School fees, college fees, books, school supplies, student support, and educational projects', icon: 'graduation-cap', sortOrder: 2 } }),
+    52→    52→    prisma.category.create({ data: { name: 'Emergency', slug: 'emergency', description: 'Family emergencies, accidents, fires, natural disasters, and crisis support', icon: 'alert-triangle', sortOrder: 3 } }),
+    53→    53→    prisma.category.create({ data: { name: 'Family & Personal', slug: 'family-personal', description: 'Family support, housing emergencies, food support, essential needs, and personal emergencies', icon: 'home', sortOrder: 4 } }),
+    54→    54→    prisma.category.create({ data: { name: 'Funeral & Memorial', slug: 'funeral-memorial', description: 'Funeral expenses, memorial support, burial expenses, and family bereavement support', icon: 'flower-2', sortOrder: 5 } }),
+    55→    55→    prisma.category.create({ data: { name: 'Children', slug: 'children', description: 'Child education, child welfare, essential supplies, and community child support', icon: 'baby', sortOrder: 6 } }),
+    56→    56→    prisma.category.create({ data: { name: 'Community', slug: 'community', description: 'Community development, local projects, community facilities, and public welfare', icon: 'users', sortOrder: 7 } }),
+    57→    57→    prisma.category.create({ data: { name: 'Charity & Nonprofit', slug: 'charity-nonprofit', description: 'Registered charities, NGOs, social impact organizations, and humanitarian projects', icon: 'globe', sortOrder: 8 } }),
+    58→    58→    prisma.category.create({ data: { name: 'Animal Welfare', slug: 'animal-welfare', description: 'Animal rescue, veterinary treatment, shelter support, and animal care', icon: 'paw-print', sortOrder: 9 } }),
+    59→    59→    prisma.category.create({ data: { name: 'Disaster Relief', slug: 'disaster-relief', description: 'Flood relief, fire relief, storm relief, emergency supplies, and disaster recovery', icon: 'cloud-rain', sortOrder: 10 } }),
+    60→    60→  ]);
+    61→    61→
+    62→    62→  // Create Users (diverse, no religious titles)
+    63→    63→  await prisma.user.create({ data: { name: 'Admin User', email: 'admin@gracefund.org', role: 'admin', verificationLevel: 'organization', status: 'active' } });
+    64→    64→  const users = await Promise.all([
+    65→    65→    prisma.user.create({ data: { name: 'Sarah Johnson', email: 'sarah@example.com', role: 'fundraiser', verificationLevel: 'identity', status: 'active' } }),
+    66→    66→    prisma.user.create({ data: { name: 'David Menon', email: 'david@example.com', role: 'organization', verificationLevel: 'organization', status: 'active' } }),
+    67→    67→    prisma.user.create({ data: { name: 'Maria Santos', email: 'maria@example.com', role: 'fundraiser', verificationLevel: 'basic', status: 'active' } }),
+    68→    68→    prisma.user.create({ data: { name: 'James Okafor', email: 'james@example.com', role: 'fundraiser', verificationLevel: 'identity', status: 'active' } }),
+    69→    69→    prisma.user.create({ data: { name: 'Ruth Kumar', email: 'ruth@example.com', role: 'fundraiser', verificationLevel: 'basic', status: 'active' } }),
+    70→    70→    prisma.user.create({ data: { name: 'Priya Sharma', email: 'priya@example.com', role: 'fundraiser', verificationLevel: 'identity', status: 'active' } }),
+    71→    71→    prisma.user.create({ data: { name: 'Michael Chen', email: 'michael@example.com', role: 'donor', verificationLevel: 'basic', status: 'active' } }),
+    72→    72→    prisma.user.create({ data: { name: 'Grace Williams', email: 'grace@example.com', role: 'donor', verificationLevel: 'basic', status: 'active' } }),
+    73→    73→  ]);
+    74→    74→
+    75→    75→  // Create Organizations (secular, diverse types)
+    76→    76→  await prisma.organization.create({
+    77→    77→    data: { ownerId: users[1].id, name: 'Seva Foundation', type: 'ngo', description: 'A registered nonprofit working in community development and welfare across Telangana for over 15 years.', website: 'https://sevafoundation.org', country: 'India', city: 'Hyderabad', verificationStatus: 'verified', socialLinks: JSON.stringify({ facebook: '#', website: 'https://sevafoundation.org' }) },
+    78→    78→  });
+    79→    79→  await prisma.organization.create({
+    80→    80→    data: { ownerId: users[5].id, name: 'Hope Foundation', type: 'charity', description: 'A registered charity focused on education and child welfare across rural India.', country: 'India', city: 'Bangalore', verificationStatus: 'verified', socialLinks: JSON.stringify({ website: 'https://hopefoundation.org' }) },
+    81→    81→  });
+    82→    82→
+    83→    83→  // Cover images - diverse, inclusive imagery
+    84→    84→  const covers = [
+    85→    85→    'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800&h=500&fit=crop',
+    86→    86→    'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&h=500&fit=crop',
+    87→    87→    'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&h=500&fit=crop',
+    88→    88→    'https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=800&h=500&fit=crop',
+    89→    89→    'https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=800&h=500&fit=crop',
+    90→    90→    'https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=500&fit=crop',
+    91→    91→    'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=800&h=500&fit=crop',
+    92→    92→    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&h=500&fit=crop',
+    93→    93→    'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&h=500&fit=crop',
+    94→    94→  ];
+    95→    95→
+    96→    96→  const defaultFeatures = JSON.stringify({ donor_messages: true, anonymous_donations: true, campaign_updates: true, beneficiary_verification: false, fund_usage: false });
+    97→    97→
+    98→    98→  // Create diverse, secular campaigns
+    99→    99→  const campaigns = await Promise.all([
+   100→   100→    // 1. Emergency Medical Treatment for a Father
+   101→   101→    prisma.campaign.create({
+   102→   102→      data: {
+   103→   103→        slug: 'emergency-medical-treatment-father',
+   104→   104→        title: 'Help a Father Receive Emergency Medical Treatment',
+   105→   105→        shortDescription: 'Rajesh, a 42-year-old father of three, was diagnosed with a serious heart condition. He needs urgent surgery that the family cannot afford.',
+   106→   106→        story: 'Rajesh Kumar is a loving father of three young children and the sole breadwinner for his family. Two months ago, he was diagnosed with a critical heart condition that requires immediate surgical intervention.\n\nThe estimated cost of the surgery, including hospitalization and post-operative care, is ₹8,00,000. The family has already exhausted their savings on diagnostic tests and preliminary treatments.\n\nRajesh\'s wife, Lakshmi, is a homemaker who is now struggling to manage household expenses while caring for her husband and three children. The surgery is scheduled for next month, and the family needs to arrange the funds urgently.\n\nEvery donation, no matter how small, brings this family closer to the care Rajesh needs.',
+   107→   107→        categoryId: categories[0].id, organizerId: users[4].id, campaignType: 'family',
+   108→   108→        beneficiaryName: 'Rajesh Kumar', beneficiaryRelationship: 'Brother-in-law',
+   109→   109→        countryId: india.id, stateId: andhra.id, cityId: vizag.id,
+   110→   110→        goalAmount: 800000, raisedAmount: 456000, currency: 'INR',
+   111→   111→        status: 'published', verificationLevel: 'identity', isFeatured: true, isUrgent: true,
+   112→   112→        campaignFeatures: defaultFeatures, coverImage: covers[0],
+   113→   113→        donorCount: 234, viewCount: 5670, endDate: new Date('2026-10-15'),
+   114→   114→      },
+   115→   115→    }),
+   116→   116→    // 2. Help a Student Continue Her Education
+   117→   117→    prisma.campaign.create({
+   118→   118→      data: {
+   119→   119→        slug: 'help-student-continue-education',
+   120→   120→        title: 'Help a Student Continue Her Education',
+   121→   121→        shortDescription: 'Anita is a bright 14-year-old girl from a low-income family. Her father lost his job, and the family is struggling to pay her school fees.',
+   122→   122→        story: 'Anita has always been a dedicated student. She dreams of becoming a doctor and serving her community. However, her family\'s financial situation has made it increasingly difficult to continue her education.\n\nHer father, who worked as a daily wage laborer, lost his job during an economic downturn. Her mother works as a domestic helper, but her earnings are barely enough to cover basic necessities.\n\nAnita needs approximately ₹50,000 to cover her school fees, books, uniform, and other educational supplies for the next academic year. Without this support, she may have to drop out of school.\n\nEvery contribution, no matter how small, will help keep Anita in school and give her the chance to pursue her dreams.',
+   123→   123→        categoryId: categories[1].id, organizerId: users[0].id, campaignType: 'individual',
+   124→   124→        beneficiaryName: 'Anita Reddy', beneficiaryRelationship: 'Family friend',
+   125→   125→        countryId: india.id, stateId: telangana.id, cityId: hyd.id,
+   126→   126→        goalAmount: 50000, raisedAmount: 32500, currency: 'INR',
+   127→   127→        status: 'published', verificationLevel: 'identity', isFeatured: true, isUrgent: false,
+   128→   128→        campaignFeatures: defaultFeatures, coverImage: covers[1],
+   129→   129→        donorCount: 87, viewCount: 2340, endDate: new Date('2026-12-31'),
+   130→   130→      },
+   131→   131→    }),
+   132→   132→    // 3. Support a Family After a House Fire
+   133→   133→    prisma.campaign.create({
+   134→   134→      data: {
+   135→   135→        slug: 'support-family-after-house-fire',
+   136→   136→        title: 'Support a Family After a House Fire',
+   137→   137→        shortDescription: 'The Patel family lost everything in a devastating house fire. They need help rebuilding their lives and finding temporary housing.',
+   138→   138→        story: 'On a quiet Sunday morning, a fire broke out in the Patel family home. Within minutes, years of memories, belongings, and their sense of security were reduced to ashes. Thankfully, the family of five escaped unharmed, but they are now facing an incredibly difficult road ahead.\n\nSuresh Patel, a taxi driver, and his wife Meena were not insured. They are currently staying with relatives while trying to figure out how to rebuild. The estimated cost of repairs and replacing essential items is ₹6,00,000.\n\nThe couple has three children, the youngest just 4 years old. They need help with temporary accommodation, replacing clothing and school supplies, and eventually repairing their home.\n\nThis family has always been known for helping others in their community. Now, they are the ones who need support.',
+   139→   139→        categoryId: categories[2].id, organizerId: users[2].id, campaignType: 'family',
+   140→   140→        beneficiaryName: 'Patel Family', beneficiaryRelationship: 'Neighbor',
+   141→   141→        countryId: india.id, stateId: maharashtra.id, cityId: mumbai.id,
+   142→   142→        goalAmount: 600000, raisedAmount: 287000, currency: 'INR',
+   143→   143→        status: 'published', verificationLevel: 'basic', isFeatured: true, isUrgent: true,
+   144→   144→        campaignFeatures: defaultFeatures, coverImage: covers[2],
+   145→   145→        donorCount: 145, viewCount: 3890, endDate: new Date('2026-11-30'),
+   146→   146→      },
+   147→   147→    }),
+   148→   148→    // 4. Provide School Supplies for Children
+   149→   149→    prisma.campaign.create({
+   150→   150→      data: {
+   151→   151→        slug: 'provide-school-supplies-children',
+   152→   152→        title: 'Provide School Supplies for 100 Children',
+   153→   153→        shortDescription: 'Many children in rural areas attend school without proper supplies. Help us provide 200 school kits to children in need across Tamil Nadu.',
+   154→   154→        story: 'In many rural communities, children walk several kilometers to school carrying their books in plastic bags or not at all. This affects their dignity, motivation, and ability to organize their learning materials.\n\nWe aim to provide 200 school kits, each containing a school bag, notebooks, pens, pencils, erasers, a geometry box, and a water bottle. Each complete kit costs approximately ₹750.\n\nThese kits will be distributed to children from low-income families across 10 villages in Tamil Nadu. We have already identified the children and schools that will benefit from this program.\n\nA school kit may seem like a small thing, but for these children, it represents hope, dignity, and the belief that their education matters.',
+   155→   155→        categoryId: categories[5].id, organizerId: users[3].id, campaignType: 'charity',
+   156→   156→        beneficiaryName: 'Village Children - Tamil Nadu', beneficiaryRelationship: 'Program Director',
+   157→   157→        countryId: india.id, stateId: tamilNadu.id, cityId: chennai.id,
+   158→   158→        goalAmount: 150000, raisedAmount: 89700, currency: 'INR',
+   159→   159→        status: 'published', verificationLevel: 'identity', isFeatured: false, isUrgent: false,
+   160→   160→        campaignFeatures: defaultFeatures, coverImage: covers[3],
+   161→   161→        donorCount: 203, viewCount: 4210, endDate: new Date('2026-11-30'),
+   162→   162→      },
+   163→   163→    }),
+   164→   164→    // 5. Community Food Distribution Project
+   165→   165→    prisma.campaign.create({
+   166→   166→      data: {
+   167→   167→        slug: 'community-food-distribution',
+   168→   168→        title: 'Community Food Distribution Project',
+   169→   169→        shortDescription: 'Help us feed 500 families every weekend for three months. Our community kitchen provides nutritious meals to those facing food insecurity.',
+   170→   170→        story: 'Food insecurity affects thousands of families in urban slums. Our community kitchen, run entirely by volunteers, has been providing meals every weekend for the past two years.\n\nWe currently serve about 300 families every weekend, but the demand has been increasing. With additional funding, we want to expand to serve 500 families and add a mid-week distribution.\n\nThe program costs approximately ₹50,000 per week to run, covering groceries, cooking gas, packaging materials, and transportation. Our goal is to raise ₹6,00,000 to sustain the program for three months while we develop long-term partnerships.\n\nEvery meal we serve is prepared with care. For many families, this may be the only nutritious meal they receive all week.',
+   171→   171→        categoryId: categories[6].id, organizerId: users[0].id, campaignType: 'community',
+   172→   172→        beneficiaryName: 'Community Kitchen Program', beneficiaryRelationship: 'Program Coordinator',
+   173→   173→        countryId: india.id, stateId: maharashtra.id, cityId: mumbai.id,
+   174→   174→        goalAmount: 600000, raisedAmount: 234000, currency: 'INR',
+   175→   175→        status: 'published', verificationLevel: 'identity', isFeatured: false, isUrgent: false,
+   176→   176→        campaignFeatures: defaultFeatures, coverImage: covers[4],
+   177→   177→        donorCount: 178, viewCount: 3120, endDate: new Date('2027-01-31'),
+   178→   178→      },
+   179→   179→    }),
+   180→   180→    // 6. Help Rebuild a Community Center
+   181→   181→    prisma.campaign.create({
+   182→   182→      data: {
+   183→   183→        slug: 'rebuild-community-center',
+   184→   184→        title: 'Help Rebuild a Community Center',
+   185→   185→        shortDescription: 'A cyclone severely damaged our community center that served 500+ families. We need support to restore this vital community hub.',
+   186→   186→        story: 'Our community center has been a vital resource in Hyderabad for over 15 years. During a recent cyclone, the building suffered catastrophic damage. The roof collapsed, windows were shattered, and the interior was severely damaged.\n\nThe center serves over 500 families, providing free tutoring for underprivileged children, a weekly food distribution program, vocational training for women, and a senior citizens\' activity group.\n\nThe estimated cost of repairs is ₹15,00,000. The community has raised some funds, but we need additional support to complete the restoration.\n\nYour support will help restore not just a building, but a community hub that touches hundreds of lives every week.',
+   187→   187→        categoryId: categories[6].id, organizerId: users[5].id, campaignType: 'community',
+   188→   188→        beneficiaryName: 'Hyderabad Community Center', beneficiaryRelationship: 'Project Lead',
+   189→   189→        countryId: india.id, stateId: telangana.id, cityId: hyd.id,
+   190→   190→        goalAmount: 1500000, raisedAmount: 875000, currency: 'INR',
+   191→   191→        status: 'published', verificationLevel: 'identity', isFeatured: true, isUrgent: false,
+   192→   192→        campaignFeatures: defaultFeatures, coverImage: covers[5],
+   193→   193→        donorCount: 312, viewCount: 6780, endDate: new Date('2027-03-01'),
+   194→   194→      },
+   195→   195→    }),
+   196→   196→    // 7. Funeral Support for a Grieving Family
+   197→   197→    prisma.campaign.create({
+   198→   198→      data: {
+   199→   199→        slug: 'funeral-support-grieving-family',
+   200→   200→        title: 'Funeral Support for a Grieving Family',
+   201→   201→        shortDescription: 'The Thomas family lost their mother unexpectedly. They are struggling to arrange a dignified funeral and need support during this difficult time.',
+   202→   202→        story: 'The Thomas family is going through an incredibly difficult time. Their beloved mother, Susamma Thomas (62), passed away unexpectedly due to a sudden cardiac arrest. She was the pillar of the family and is survived by her husband and four children.\n\nThe family is facing financial hardship and is struggling to arrange a dignified funeral. They need support with funeral home costs, coffin, burial expenses, and other related costs.\n\nThe family has always been active in their community and has helped many others in times of need. Now, they are the ones who need support.\n\nAny contribution, no matter how small, will help the family give their mother the farewell she deserves and ease their burden during this time of grief.',
+   203→   203→        categoryId: categories[4].id, organizerId: users[4].id, campaignType: 'family',
+   204→   204→        beneficiaryName: 'Thomas Family', beneficiaryRelationship: 'Community Member',
+   205→   205→        countryId: india.id, stateId: telangana.id, cityId: hyd.id,
+   206→   206→        goalAmount: 75000, raisedAmount: 52000, currency: 'INR',
+   207→   207→        status: 'published', verificationLevel: 'basic', isFeatured: false, isUrgent: true,
+   208→   208→        campaignFeatures: defaultFeatures, coverImage: covers[6],
+   209→   209→        donorCount: 98, viewCount: 1890, endDate: new Date('2026-09-30'),
+   210→   210→      },
+   211→   211→    }),
+   212→   212→    // 8. Support a Registered Charity Project
+   213→   213→    prisma.campaign.create({
+   214→   214→      data: {
+   215→   215→        slug: 'support-registered-charity-project',
+   216→   216→        title: 'Support a Registered Charity Project',
+   217→   217→        shortDescription: 'Hope Foundation is raising funds to build a learning center for underprivileged children in rural Karnataka. Every child deserves access to quality education.',
+   218→   218→        story: 'Hope Foundation is a registered nonprofit that has been working in child education and welfare for 12 years. Our latest project aims to build a dedicated learning center in a rural district of Karnataka where educational infrastructure is severely lacking.\n\nThe learning center will serve 300+ children annually, providing after-school tutoring, computer literacy classes, a library, and a safe space for learning. The total project cost is ₹20,00,000, of which we have already raised ₹8,00,000 through grants and individual donors.\n\nWe need an additional ₹12,00,000 to complete construction and equip the center. Our organization is verified, and all financial records are available for review.\n\nEducation is the most powerful tool we can give a child. With your support, we can give hundreds of children the chance to break the cycle of poverty.',
+   219→   219→        categoryId: categories[7].id, organizerId: users[5].id, campaignType: 'charity',
+   220→   220→        beneficiaryName: 'Hope Foundation', beneficiaryRelationship: 'Director',
+   221→   221→        countryId: india.id, stateId: karnataka.id, cityId: blr.id,
+   222→   222→        goalAmount: 1200000, raisedAmount: 680000, currency: 'INR',
+   223→   223→        status: 'published', verificationLevel: 'organization', isFeatured: true, isUrgent: false,
+   224→   224→        campaignFeatures: defaultFeatures, coverImage: covers[8],
+   225→   225→        donorCount: 267, viewCount: 5430, endDate: new Date('2027-04-30'),
+   226→   226→      },
+   227→   227→    }),
+   228→   228→    // 9. Animal Rescue and Veterinary Care
+   229→   229→    prisma.campaign.create({
+   230→   230→      data: {
+   231→   231→        slug: 'animal-rescue-veterinary-care',
+   232→   232→        title: 'Animal Rescue and Veterinary Care',
+   233→   233→        shortDescription: 'Our shelter has taken in 30 injured and abandoned animals after recent floods. We need funds for veterinary treatment, food, and shelter repairs.',
+   234→   234→        story: 'After the recent floods in Telangana, our small animal shelter was overwhelmed with injured and abandoned animals. We have taken in 30 additional animals, including dogs, cats, and cattle, that were found stranded or injured in the floodwaters.\n\nThe veterinary bills for treating these animals are mounting. Many need surgery, vaccinations, and ongoing medication. Additionally, our shelter building suffered damage and needs repairs.\n\nWe need approximately ₹2,50,000 to cover veterinary care for all the animals, repair the shelter, and ensure we have enough food and supplies for the next three months.\n\nEvery animal deserves care and compassion. Your support helps us continue our mission of rescuing and rehabilitating animals in need.',
+   235→   235→        categoryId: categories[8].id, organizerId: users[1].id, campaignType: 'organization',
+   236→   236→        beneficiaryName: 'Hyderabad Animal Shelter', beneficiaryRelationship: 'Shelter Manager',
+   237→   237→        countryId: india.id, stateId: telangana.id, cityId: hyd.id,
+   238→   238→        goalAmount: 250000, raisedAmount: 124000, currency: 'INR',
+   239→   239→        status: 'published', verificationLevel: 'identity', isFeatured: false, isUrgent: true,
+   240→   240→        campaignFeatures: defaultFeatures, coverImage: covers[7],
+   241→   241→        donorCount: 89, viewCount: 2670, endDate: new Date('2026-10-31'),
+   242→   242→      },
+   243→   243→    }),
+   244→   244→  ]);
+   245→   245→
+   246→   246→  // Create donations
+   247→   247→  const donorNames = ['Anonymous Donor', 'Michael Chen', 'Grace Williams', 'John Smith', 'Emily Davis', 'Robert Wilson', 'Sarah Brown', 'David Lee', 'Jennifer Martinez', 'Chris Anderson'];
+   248→   248→  const messages = ['You are in my thoughts.', 'Sending strength and support.', 'Keep going, you are not alone.', 'Wishing you the very best.', 'Stay strong.', 'Hope this helps.', 'Thinking of you and your family.', 'Wishing you a speedy recovery.', 'Well done for organizing this.', 'Proud to support this cause.'];
+   249→   249→  const amounts = [500, 1000, 2500, 5000, 10000];
+   250→   250→
+   251→   251→  for (const campaign of campaigns) {
+   252→   252→    const numDonations = Math.floor(Math.random() * 10) + 5;
+   253→   253→    for (let i = 0; i < numDonations; i++) {
+   254→   254→      await prisma.donation.create({
+   255→   255→        data: {
+   256→   256→          campaignId: campaign.id,
+   257→   257→          donorName: donorNames[Math.floor(Math.random() * donorNames.length)],
+   258→   258→          amount: amounts[Math.floor(Math.random() * amounts.length)],
+   259→   259→          currency: campaign.currency,
+   260→   260→          paymentStatus: 'completed', paymentProvider: 'demo',
+   261→   261→          donorMessage: messages[Math.floor(Math.random() * messages.length)],
+   262→   262→          isAnonymous: Math.random() > 0.7,
+   263→   263→          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+   264→   264→        },
+   265→   265→      });
+   266→   266→    }
+   267→   267→  }
+   268→   268→
+   269→   269→  // Create campaign updates
+   270→   270→  await prisma.campaignUpdate.createMany({
+   271→   271→    data: [
+   272→   272→      { campaignId: campaigns[1].id, title: 'Thank You for Your Generosity!', content: 'We have reached 65% of our goal! Anita is so grateful for each one of you. She has been studying hard and got the highest marks in her class this term.', createdAt: new Date('2026-08-15') },
+   273→   273→      { campaignId: campaigns[1].id, title: 'Anita Started Her New Term', content: 'Thanks to your support, Anita was able to start her new school term on time. She is now in 9th grade and doing exceptionally well.', createdAt: new Date('2026-07-20') },
+   274→   274→      { campaignId: campaigns[0].id, title: 'Surgery Date Confirmed', content: 'We are grateful to share that Rajesh\'s surgery has been scheduled for next month. The doctors are optimistic about the outcome. Please continue to keep the family in your thoughts.', createdAt: new Date('2026-08-20') },
+   275→   275→      { campaignId: campaigns[5].id, title: 'Cleanup and Assessment Complete', content: 'Our volunteer team has completed the initial cleanup and structural assessment. The good news is that the foundation is intact.', createdAt: new Date('2026-08-10') },
+   276→   276→      { campaignId: campaigns[5].id, title: 'Temporary Space Secured', content: 'While the center is being rebuilt, we have secured a temporary space for our programs. The work continues!', createdAt: new Date('2026-08-25') },
+   277→   277→      { campaignId: campaigns[2].id, title: 'Family Moved to Temporary Housing', content: 'The Patel family has found a temporary place to stay thanks to a generous community member. The road ahead is still long, but this takes some pressure off.', createdAt: new Date('2026-08-22') },
+   278→   278→    ],
+   279→   279→  });
+   280→   280→
+   281→   281→  // Platform Settings (secular, inclusive)
+   282→   282→  await prisma.platformSettings.createMany({
+   283→   283→    data: [
+   284→   284→      { key: 'platform_fee_percent', value: '5' },
+   285→   285→      { key: 'fixed_transaction_fee', value: '0' },
+   286→   286→      { key: 'donor_tip_enabled', value: 'true' },
+   287→   287→      { key: 'default_tip_percent', value: '5' },
+   288→   288→      { key: 'admin_moderation_enabled', value: 'true' },
+   289→   289→      { key: 'international_donations_enabled', value: 'false' },
+   290→   290→      { key: 'site_name', value: 'GraceFund' },
+   291→   291→      { key: 'site_tagline', value: 'Giving Hope. Changing Lives.' },
+   292→   292→      { key: 'site_description', value: 'A trusted community crowdfunding platform that helps individuals, families, communities, organizations, and meaningful causes raise financial support when they need it most.' },
+   293→   293→    ],
+   294→   294→  });
+   295→   295→
+   296→   296→  console.log('Seed completed successfully!');
+   297→   297→  console.log(`Created ${campaigns.length} campaigns, ${categories.length} categories, ${users.length + 1} users`);
+   298→   298→}
+   299→   299→
+   300→   300→main().catch((e) => { console.error(e); process.exit(1); }).finally(async () => { await prisma.$disconnect(); });
+   301→   301→

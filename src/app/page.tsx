@@ -14,6 +14,8 @@ import { ExploreView } from '@/components/gracefund/explore-view';
 import { CreateCampaignWizard } from '@/components/gracefund/create-campaign-wizard';
 import { DonationModal } from '@/components/gracefund/donation-modal';
 import { AuthModal } from '@/components/gracefund/auth-modal';
+import { ReportModal } from '@/components/gracefund/report-modal';
+import { TrustSafetyPage } from '@/components/gracefund/trust-safety-page';
 import { DonorDashboard, FundraiserDashboard, AdminDashboard } from '@/components/gracefund/dashboards';
 
 interface Campaign {
@@ -29,6 +31,7 @@ interface Campaign {
   isUrgent: boolean;
   verificationLevel: string;
   endDate: string | null;
+  status: string;
   category?: { name: string; icon: string; slug: string } | null;
   organizer?: { name: string | null } | null;
   _count?: { donations: number };
@@ -86,6 +89,7 @@ export default function HomePage() {
         {currentView === 'donor-dashboard' && <DonorDashboard />}
         {currentView === 'fundraiser-dashboard' && <FundraiserDashboard />}
         {currentView === 'admin-dashboard' && <AdminDashboard />}
+        {currentView === 'trust-safety' && <TrustSafetyPage />}
       </main>
 
       <Footer />
@@ -93,6 +97,7 @@ export default function HomePage() {
       {/* Modals */}
       <DonationModal />
       <AuthModal />
+      <ReportModal />
     </div>
   );
 }

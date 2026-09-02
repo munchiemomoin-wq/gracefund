@@ -8,11 +8,19 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  ArrowLeft, MapPin, Users, Shield, Clock, AlertTriangle, Heart,
-  Share2, Copy, Check, Calendar, Link2,
+  ArrowLeft, MapPin, Users, Shield, ShieldCheck, ShieldAlert, Clock, AlertTriangle, Heart,
+  Share2, Copy, Check, Calendar, Link2, Flag, FileText, Info, Eye,
 } from 'lucide-react';
 import { formatCurrency, getProgressPercent, getDaysRemaining } from '@/lib/currency';
 import { motion } from 'framer-motion';
+
+interface FundUsageItem {
+  id: string;
+  category: string;
+  amount: number;
+  description: string | null;
+  sortOrder: number;
+}
 
 interface CampaignDetail {
   id: string;
@@ -31,6 +39,7 @@ interface CampaignDetail {
   verificationLevel: string;
   endDate: string | null;
   createdAt: string;
+  status: string;
   campaignType?: string | null;
   campaignFeatures?: string | null;
   beneficiaryName: string | null;
@@ -39,11 +48,21 @@ interface CampaignDetail {
   organizer?: { id: string; name: string | null; avatarUrl: string | null; role: string } | null;
   updates?: Array<{ id: string; title: string; content: string | null; imageUrl: string | null; createdAt: string }>;
   donations?: Array<{ id: string; donorName: string; amount: number; currency: string; donorMessage: string | null; isAnonymous: boolean; showNamePublicly: boolean; createdAt: string }>;
+  fundUsageItems?: FundUsageItem[];
+  openReportsCount?: number;
   _count?: { donations: number; favorites: number };
 }
 
+const verificationLabels: Record<string, { label: string; color: string; icon: typeof Shield }> = {
+  none: { label: 'Unverified', color: 'bg-gray-100 text-gray-600', icon: Shield },
+  basic: { label: 'Basic Verified', color: 'bg-blue-100 text-blue-700', icon: ShieldCheck },
+  identity: { label: 'Identity Verified', color: 'bg-emerald-100 text-emerald-700', icon: ShieldCheck },
+  beneficiary: { label: 'Beneficiary Verified', color: 'bg-emerald-100 text-emerald-700', icon: ShieldCheck },
+  organization: { label: 'Organization Verified', color: 'bg-emerald-100 text-emerald-700', icon: ShieldCheck },
+};
+
 export function CampaignDetail() {
-  const { selectedCampaignSlug, setCurrentView, setShowDonationModal } = useAppStore();
+  const { selectedCampaignSlug, setCurrentView, setShowDonationModal, setShowReportModal } = useAppStore();
   const [campaign, setCampaign] = useState<CampaignDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [supported, setSupported] = useState(false);
@@ -107,6 +126,9 @@ export function CampaignDetail() {
 
   const progress = getProgressPercent(campaign.raisedAmount, campaign.goalAmount);
   const daysLeft = getDaysRemaining(campaign.endDate ? new Date(campaign.endDate) : null);
+  const vInfo = verificationLabels[campaign.verificationLevel] || verificationLabels.none;
+  const VerificationIcon = vInfo.icon;
+  const isUnderInvestigation = campaign.status === 'under_investigation';
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -131,6 +153,17 @@ export function CampaignDetail() {
         <ArrowLeft className="h-4 w-4" /> Back to campaigns
       </button>
 
+      {/* Investigation Banner */}
+      {isUnderInvestigation && (
+        <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 p-4 flex items-start gap-3">
+          <Info className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-amber-800">This campaign is currently under review.</p>
+            <p className="text-xs text-amber-700 mt-1">Our team is reviewing this campaign to ensure it meets our guidelines. Donations and withdrawals may be temporarily paused during this process.</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <div className="relative aspect-video overflow-hidden rounded-2xl bg-muted">
@@ -144,7 +177,7 @@ export function CampaignDetail() {
                 <Badge className="bg-red-500 text-white border-0 gap-1"><AlertTriangle className="h-3 w-3" /> Urgent Need</Badge>
               )}
               {campaign.verificationLevel !== 'none' && (
-                <Badge className="bg-emerald-600 text-white border-0 gap-1"><Shield className="h-3 w-3" /> Verified</Badge>
+                <Badge className="bg-emerald-600 text-white border-0 gap-1"><VerificationIcon className="h-3 w-3" /> {vInfo.label}</Badge>
               )}
             </div>
             <div className="absolute right-3 top-3">
@@ -164,7 +197,20 @@ export function CampaignDetail() {
               </div>
               <div className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> India</div>
               <div className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {new Date(campaign.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+              {campaign.viewCount > 0 && (
+                <div className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {campaign.viewCount.toLocaleString('en-IN')} views</div>
+              )}
             </div>
+          </div>
+
+          {/* Trust & Transparency bar */}
+          <div className="flex flex-wrap items-center gap-3 rounded-xl bg-muted/30 p-3">
+            <Badge className={`${vInfo.color} border-0 gap-1 text-xs`}><VerificationIcon className="h-3 w-3" />{vInfo.label}</Badge>
+            <span className="text-xs text-muted-foreground"><Users className="inline h-3 w-3 mr-1" />{campaign.donorCount} donors</span>
+            {campaign.updates && campaign.updates.length > 0 && (
+              <span className="text-xs text-muted-foreground"><FileText className="inline h-3 w-3 mr-1" />{campaign.updates.length} update{campaign.updates.length > 1 ? 's' : ''}</span>
+            )}
+            <span className="ml-auto text-xs text-muted-foreground">Last updated {new Date(campaign.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</span>
           </div>
 
           <Separator />
@@ -174,11 +220,38 @@ export function CampaignDetail() {
             <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{campaign.story}</div>
           </div>
 
+          {/* Fund Usage Section */}
+          {campaign.fundUsageItems && campaign.fundUsageItems.length > 0 && (
+            <div className="rounded-xl border bg-muted/20 p-5">
+              <h2 className="text-lg font-semibold flex items-center gap-2"><FileText className="h-5 w-5 text-primary" /> How Funds Will Be Used</h2>
+              <p className="mt-1 text-xs text-muted-foreground">Estimated use of funds provided by the campaign organizer.</p>
+              <div className="mt-4 space-y-3">
+                {campaign.fundUsageItems
+                  .sort((a, b) => a.sortOrder - b.sortOrder)
+                  .map((item) => (
+                    <div key={item.id} className="flex items-center justify-between rounded-lg bg-background p-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{item.category}</p>
+                        {item.description && <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>}
+                      </div>
+                      <span className="text-sm font-bold text-primary ml-4 whitespace-nowrap">{formatCurrency(item.amount, campaign.currency)}</span>
+                    </div>
+                  ))}
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold">Estimated Total</span>
+                  <span className="text-sm font-bold">{formatCurrency(campaign.fundUsageItems.reduce((s, i) => s + i.amount, 0), campaign.currency)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Campaign Updates */}
           {campaign.updates && campaign.updates.length > 0 && (
             <div>
               <h2 className="text-lg font-semibold">Campaign Updates ({campaign.updates.length})</h2>
               <div className="mt-3 space-y-4">
-                {campaign.updates.map((update) => (
+                {campaign.updates?.map((update) => (
                   <div key={update.id} className="rounded-xl border bg-muted/20 p-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm font-semibold">{update.title}</h3>
@@ -191,11 +264,12 @@ export function CampaignDetail() {
             </div>
           )}
 
+          {/* Recent Supporters */}
           {campaign.donations && campaign.donations.length > 0 && (
             <div>
               <h2 className="text-lg font-semibold">Recent Supporters</h2>
               <div className="mt-3 space-y-3">
-                {campaign.donations.slice(0, 5).map((d) => (
+                {campaign.donations?.slice(0, 5).map((d) => (
                   <div key={d.id} className="flex items-start gap-3 rounded-lg p-2 hover:bg-muted/30 transition-colors">
                     <Avatar className="h-8 w-8 mt-0.5">
                       <AvatarFallback className="text-xs bg-[var(--gold)]/10 text-[var(--gold)]">{(d.isAnonymous || !d.showNamePublicly) ? 'A' : d.donorName.charAt(0)}</AvatarFallback>
@@ -213,6 +287,16 @@ export function CampaignDetail() {
               </div>
             </div>
           )}
+
+          {/* Report Campaign Button */}
+          <div className="flex justify-end pt-2">
+            <button
+              onClick={() => setShowReportModal(true, campaign.id)}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-600 transition-colors"
+            >
+              <Flag className="h-3.5 w-3.5" /> Report this campaign
+            </button>
+          </div>
         </div>
 
         {/* RIGHT - Donation Card (sticky) */}
@@ -261,6 +345,14 @@ export function CampaignDetail() {
 
               <Separator className="my-4" />
 
+              {/* Verification Level Detail */}
+              <div className="flex items-center gap-2 rounded-lg bg-muted/30 p-3">
+                <VerificationIcon className={`h-4 w-4 ${campaign.verificationLevel !== 'none' ? 'text-emerald-600' : 'text-muted-foreground'}`} />
+                <span className="text-xs font-medium">{vInfo.label}</span>
+              </div>
+
+              <Separator className="my-4" />
+
               {/* Share */}
               <div>
                 <p className="text-xs font-medium text-muted-foreground mb-2">Share this campaign</p>
@@ -287,16 +379,25 @@ export function CampaignDetail() {
                 <h3 className="text-sm font-semibold">Organized by</h3>
                 <div className="mt-2 flex items-center gap-3">
                   <Avatar><AvatarFallback className="bg-primary/10 text-primary">{campaign.organizer?.name?.charAt(0) || 'G'}</AvatarFallback></Avatar>
-                  <div>
-                    <p className="text-sm font-medium">{campaign.organizer?.name || 'Community Member'}</p>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{campaign.organizer?.name || 'Community Member'}</p>
                     {campaign.beneficiaryName && <p className="text-xs text-muted-foreground">Beneficiary: {campaign.beneficiaryName}</p>}
                   </div>
-                  {campaign.verificationLevel !== 'none' && (
-                    <Badge className="ml-auto bg-emerald-100 text-emerald-700 border-0 text-xs"><Shield className="mr-1 h-3 w-3" /> Verified</Badge>
-                  )}
+                  <Badge className={`ml-auto ${vInfo.color} border-0 text-xs gap-1 shrink-0`}><VerificationIcon className="h-3 w-3" />{vInfo.label}</Badge>
                 </div>
               </div>
             )}
+
+            {/* Transparency Notice */}
+            <div className="rounded-xl border border-dashed bg-muted/20 p-4">
+              <div className="flex items-start gap-2">
+                <ShieldAlert className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Donation Transparency</p>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">GraceFund uses verification and review processes designed to help improve trust and transparency. Donor information, beneficiary documents, and internal review notes are kept confidential.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -18,6 +18,20 @@ export async function GET(
           orderBy: { createdAt: 'desc' },
           take: 20,
         },
+        fundUsageItems: {
+          select: {
+            id: true,
+            category: true,
+            amount: true,
+            description: true,
+            sortOrder: true,
+          },
+          orderBy: { sortOrder: 'asc' },
+        },
+        reports: {
+          select: { id: true },
+          where: { status: { in: ['new', 'under_review'] } },
+        },
         _count: { select: { donations: true, favorites: true } },
       },
     });
@@ -26,7 +40,14 @@ export async function GET(
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
     }
 
-    return NextResponse.json(campaign);
+    // Add computed openReportsCount
+    const { reports, ...rest } = campaign;
+    const result = {
+      ...rest,
+      openReportsCount: reports.length,
+    };
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching campaign:', error);
     return NextResponse.json({ error: 'Failed to fetch campaign' }, { status: 500 });
