@@ -228,13 +228,21 @@ async function main() {
     const campaign = campaigns[ci];
     const numDonations = Math.floor(Math.random() * 10) + 5;
     for (let i = 0; i < numDonations; i++) {
+      const donationAmt = amounts[Math.floor(Math.random() * amounts.length)];
+      const tipAmt = Math.random() > 0.6 ? [0, 25, 50, 100][Math.floor(Math.random() * 4)] : 0;
       await prisma.donation.create({
         data: {
           campaignId: campaign.id,
           donorName: donorNames[Math.floor(Math.random() * donorNames.length)],
-          amount: amounts[Math.floor(Math.random() * amounts.length)],
+          amount: donationAmt,
           currency: campaign.currency,
-          paymentStatus: 'completed', paymentProvider: 'demo',
+          platformTipAmount: tipAmt,
+          paymentTotalAmount: donationAmt + tipAmt,
+          paymentStatus: 'succeeded',
+          paymentProvider: 'demo',
+          paymentOrderId: `DEMO-${Date.now()}-${ci}-${i}`,
+          paymentTransactionId: `DEMO-TXN-${Date.now()}-${ci}-${i}`,
+          idempotencyKey: `seed-${ci}-${i}-${Date.now()}`,
           donorMessage: messages[Math.floor(Math.random() * messages.length)],
           isAnonymous: Math.random() > 0.7,
           createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
@@ -291,7 +299,7 @@ async function main() {
     data: { campaignId: campaigns[1].id, requesterId: users[0].id, amount: 20000, status: 'requested', requestedAt: new Date('2026-09-01') },
   });
   await prisma.withdrawalRequest.create({
-    data: { campaignId: campaigns[5].id, requesterId: users[5].id, amount: 500000, status: 'documents_required', reviewerId: admin.id, reviewedAt: new Date('2026-08-30'), reviewNotes: 'Please upload contractor invoices and bank statements for the first phase of repairs.', rejectionReason: undefined, requestedAt: new Date('2026-08-25') },
+    data: { campaignId: campaigns[5].id, requesterId: users[5].id, amount: 500000, status: 'documents_required', reviewerId: admin.id, reviewedAt: new Date('2026-08-30'), reviewNotes: 'Please upload contractor invoices and bank statements for the first phase of repairs.', requestedAt: new Date('2026-08-25') },
   });
 
   // ===== RISK EVENTS (demo) =====

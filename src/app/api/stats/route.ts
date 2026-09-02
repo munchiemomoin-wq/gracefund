@@ -22,9 +22,9 @@ export async function GET() {
     ] = await Promise.all([
       db.donation.aggregate({
         _sum: { amount: true },
-        where: { paymentStatus: { in: ['completed', 'succeeded'] } },
+        where: { paymentStatus: 'succeeded' },
       }),
-      db.donation.groupBy({ by: ['donorId'], where: { paymentStatus: { in: ['completed', 'succeeded'] } } }),
+      db.donation.groupBy({ by: ['donorId'], where: { paymentStatus: 'succeeded' } }),
       db.campaign.count({ where: { status: 'published' } }),
       db.country.count({ where: { active: true } }),
       db.verification.count({ where: { status: { in: ['pending', 'documents_submitted', 'under_review'] } } }),
@@ -35,7 +35,7 @@ export async function GET() {
       db.user.count({ where: { status: { in: ['suspended', 'banned'] } } }),
       db.donation.aggregate({
         _sum: { platformTipAmount: true },
-        where: { paymentStatus: { in: ['completed', 'succeeded'] }, platformTipAmount: { gt: 0 } },
+        where: { paymentStatus: 'succeeded', platformTipAmount: { gt: 0 } },
       }),
       db.donation.aggregate({
         _sum: { amount: true },

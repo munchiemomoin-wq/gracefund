@@ -20,7 +20,7 @@ export async function GET(
           orderBy: { createdAt: 'desc' },
         },
         donations: {
-          where: { paymentStatus: { in: ['completed', 'succeeded'] } },
+          where: { paymentStatus: 'succeeded' },
           orderBy: { createdAt: 'desc' },
           take: 20,
           select: {
