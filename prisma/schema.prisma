@@ -10,86 +10,87 @@ datasource db {
 // ===== CORE USER =====
 
 model User {
-  id                String    @id @default(cuid())
-  authUserId        String?   @unique // Supabase Auth user ID — links to auth.users
-  name              String?
-  email             String    @unique
-  phone             String?
-  avatarUrl         String?
-  role              String    @default("visitor") // visitor, donor, fundraiser, organization, admin
-  status            String    @default("active") // active, pending_verification, restricted, suspended, banned
-  verificationLevel String    @default("none") // none, basic, identity, beneficiary, organization
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                String   @id @default(cuid()) @map("id")
+  authUserId        String?  @unique @map("authuserid") // Supabase Auth user ID — links to auth.users
+  name              String?  @map("name")
+  email             String   @unique @map("email")
+  phone             String?  @map("phone")
+  avatarUrl         String?  @map("avatarurl")
+  role              String   @default("visitor") @map("role") // visitor, donor, fundraiser, organization, admin
+  status            String   @default("active") @map("status") // active, pending_verification, restricted, suspended, banned
+  verificationLevel String   @default("none") @map("verificationlevel") // none, basic, identity, beneficiary, organization
+  createdAt         DateTime @default(now()) @map("createdat")
+  updatedAt         DateTime @updatedAt @map("updatedat")
 
-  campaigns            Campaign[]
-  donations            Donation[]
-  organization         Organization?
-  withdrawalRequests   WithdrawalRequest[]
-  reports              Report[]
-  auditLogs            AuditLog[]
-  favorites            Favorite[]
-  verifications        Verification[]
-  notifications        Notification[]
-  riskEvents           RiskEvent[]
-  reviewedCampaigns    Campaign[]    @relation("CampaignReviewer")
-  reviewedWithdrawals  WithdrawalRequest[] @relation("WithdrawalReviewer")
-  reviewedReports      Report[]      @relation("ReportReviewer")
-  reviewedVerifications Verification[] @relation("VerificationReviewer")
-  resolvedRiskEvents   RiskEvent[]   @relation("RiskEventResolver")
-  reviewedCampaignEdits CampaignEdit[] @relation("CampaignEditReviewer")
-  uploadedDocuments    PrivateDocument[] @relation("DocumentUploader")
-  sentInfoRequests     InfoRequest[]  @relation("InfoRequester")
+  campaigns             Campaign[]
+  donations             Donation[]
+  organization          Organization?
+  withdrawalRequests    WithdrawalRequest[]
+  reports               Report[]
+  auditLogs             AuditLog[]
+  favorites             Favorite[]
+  verifications         Verification[]
+  notifications         Notification[]
+  riskEvents            RiskEvent[]
+  reviewedCampaigns     Campaign[]          @relation("CampaignReviewer")
+  reviewedWithdrawals   WithdrawalRequest[] @relation("WithdrawalReviewer")
+  reviewedReports       Report[]            @relation("ReportReviewer")
+  reviewedVerifications Verification[]      @relation("VerificationReviewer")
+  resolvedRiskEvents    RiskEvent[]         @relation("RiskEventResolver")
+  reviewedCampaignEdits CampaignEdit[]      @relation("CampaignEditReviewer")
+  uploadedDocuments     PrivateDocument[]   @relation("DocumentUploader")
+  sentInfoRequests      InfoRequest[]       @relation("InfoRequester")
 
   @@index([authUserId])
   @@index([email])
   @@index([role])
   @@index([status])
+  @@map("User")
 }
 
 // ===== CAMPAIGN =====
 
 model Campaign {
-  id              String    @id @default(cuid())
-  slug            String    @unique
-  title           String
-  shortDescription String?
-  story           String?
-  categoryId      String?
-  organizerId     String?
-  beneficiaryName String?
-  beneficiaryRelationship String?
-  beneficiaryContact String?
-  countryId       String?
-  stateId         String?
-  cityId          String?
-  goalAmount      Float
-  raisedAmount    Float     @default(0)
-  currency        String    @default("INR")
-  status          String    @default("draft") // draft, submitted, under_review, approved, published, paused, rejected, completed, closed, under_investigation
-  verificationLevel String @default("none")
-  isFeatured      Boolean   @default(false)
-  isUrgent        Boolean   @default(false)
-  campaignType    String    @default("individual") // individual, family, community, organization, charity
-  campaignFeatures String?   // JSON
-  coverImage      String?
-  videoUrl        String?
-  endDate         DateTime?
-  donorCount      Int       @default(0)
-  viewCount       Int       @default(0)
-  riskLevel       String    @default("low") // low, medium, high — INTERNAL ONLY
-  investigationSettings String? // JSON
-  submittedAt     DateTime?
-  reviewedAt      DateTime?
-  reviewerId      String?
-  reviewNotes     String?
-  rejectionReason String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id                      String    @id @default(cuid()) @map("id")
+  slug                    String    @unique @map("slug")
+  title                   String    @map("title")
+  shortDescription        String?   @map("shortdescription")
+  story                   String?   @map("story")
+  categoryId              String?   @map("categoryid")
+  organizerId             String?   @map("organizerid")
+  beneficiaryName         String?   @map("beneficiaryname")
+  beneficiaryRelationship String?   @map("beneficiaryrelationship")
+  beneficiaryContact      String?   @map("beneficiarycontact")
+  countryId               String?   @map("countryid")
+  stateId                 String?   @map("stateid")
+  cityId                  String?   @map("cityid")
+  goalAmount              Float     @map("goalamount")
+  raisedAmount            Float     @default(0) @map("raisedamount")
+  currency                String    @default("INR") @map("currency")
+  status                  String    @default("draft") @map("status") // draft, submitted, under_review, approved, published, paused, rejected, completed, closed, under_investigation
+  verificationLevel       String    @default("none") @map("verificationlevel")
+  isFeatured              Boolean   @default(false) @map("isfeatured")
+  isUrgent                Boolean   @default(false) @map("isurgent")
+  campaignType            String    @default("individual") @map("campaigntype") // individual, family, community, organization, charity
+  campaignFeatures        String?   @map("campaignfeatures") // JSON
+  coverImage              String?   @map("coverimage")
+  videoUrl                String?   @map("videourl")
+  endDate                 DateTime? @map("enddate")
+  donorCount              Int       @default(0) @map("donorcount")
+  viewCount               Int       @default(0) @map("viewcount")
+  riskLevel               String    @default("low") @map("risklevel") // low, medium, high — INTERNAL ONLY
+  investigationSettings   String?   @map("investigationsettings") // JSON
+  submittedAt             DateTime? @map("submittedat")
+  reviewedAt              DateTime? @map("reviewedat")
+  reviewerId              String?   @map("reviewerid")
+  reviewNotes             String?   @map("reviewnotes")
+  rejectionReason         String?   @map("rejectionreason")
+  createdAt               DateTime  @default(now()) @map("createdat")
+  updatedAt               DateTime  @updatedAt @map("updatedat")
 
-  category           Category?     @relation(fields: [categoryId], references: [id])
-  organizer          User?         @relation(fields: [organizerId], references: [id])
-  reviewer           User?         @relation("CampaignReviewer", fields: [reviewerId], references: [id])
+  category           Category?           @relation(fields: [categoryId], references: [id])
+  organizer          User?               @relation(fields: [organizerId], references: [id])
+  reviewer           User?               @relation("CampaignReviewer", fields: [reviewerId], references: [id])
   donations          Donation[]
   updates            CampaignUpdate[]
   withdrawalRequests WithdrawalRequest[]
@@ -105,100 +106,104 @@ model Campaign {
   @@index([organizerId])
   @@index([slug])
   @@index([createdAt])
+  @@map("campaign")
 }
 
 // ===== DONATION =====
 
 model Donation {
-  id                   String    @id @default(cuid())
-  campaignId           String
-  donorId              String?
-  donorName            String?
-  donorEmail           String?
-  amount               Float     // campaign donation amount ONLY
-  currency             String    @default("INR")
-  platformFee          Float     @default(0)
-  platformTipAmount    Float     @default(0) // GraceFund tip — separate from campaign amount
-  paymentTotalAmount   Float     // amount + platformTipAmount
-  paymentStatus        String    @default("pending") // pending, processing, succeeded, failed, cancelled, refunded
-  paymentProvider      String?   // razorpay, stripe, demo
-  paymentOrderId       String?   // payment provider order ID
-  paymentTransactionId String?
-  providerResponse     String?   // JSON — full provider response for audit
-  idempotencyKey       String?   @unique // prevents duplicate webhook processing
-  donorMessage         String?
-  isAnonymous          Boolean   @default(false)
-  showNamePublicly     Boolean   @default(true)
-  createdAt            DateTime  @default(now())
+  id                   String   @id @default(cuid()) @map("id")
+  campaignId           String   @map("campaignid")
+  donorId              String?  @map("donorid")
+  donorName            String?  @map("donorname")
+  donorEmail           String?  @map("donoremail")
+  amount               Float    @map("amount") // campaign donation amount ONLY
+  currency             String   @default("INR") @map("currency")
+  platformFee          Float    @default(0) @map("platformfee")
+  platformTipAmount    Float    @default(0) @map("platformtipamount") // GraceFund tip — separate from campaign amount
+  paymentTotalAmount   Float    @map("paymenttotalamount") // amount + platformTipAmount
+  paymentStatus        String   @default("pending") @map("paymentstatus") // pending, processing, succeeded, failed, cancelled, refunded
+  paymentProvider      String?  @map("paymentprovider") // razorpay, stripe, demo
+  paymentOrderId       String?  @map("paymentorderid") // payment provider order ID
+  paymentTransactionId String?  @map("paymenttransactionid")
+  providerResponse     String?  @map("providerresponse") // JSON — full provider response for audit
+  idempotencyKey       String?  @unique @map("idempotencykey") // prevents duplicate webhook processing
+  donorMessage         String?  @map("donormessage")
+  isAnonymous          Boolean  @default(false) @map("isanonymous")
+  showNamePublicly     Boolean  @default(true) @map("shownamepublicly")
+  createdAt            DateTime @default(now()) @map("createdat")
 
   campaign Campaign @relation(fields: [campaignId], references: [id])
-  donor    User?   @relation(fields: [donorId], references: [id])
+  donor    User?    @relation(fields: [donorId], references: [id])
 
   @@index([campaignId])
   @@index([donorId])
   @@index([paymentStatus])
   @@index([idempotencyKey])
   @@index([createdAt])
+  @@map("donation")
 }
 
 // ===== CAMPAIGN UPDATE =====
 
 model CampaignUpdate {
-  id        String   @id @default(cuid())
-  campaignId String
-  title     String
-  content   String?
-  imageUrl  String?
-  status    String   @default("published") // published, hidden, under_review
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid()) @map("id")
+  campaignId String   @map("campaignid")
+  title      String   @map("title")
+  content    String?  @map("content")
+  imageUrl   String?  @map("imageurl")
+  status     String   @default("published") @map("status") // published, hidden, under_review
+  createdAt  DateTime @default(now()) @map("createdat")
 
   campaign Campaign @relation(fields: [campaignId], references: [id])
 
   @@index([campaignId])
+  @@map("campaignupdate")
 }
 
 // ===== ORGANIZATION =====
 
 model Organization {
-  id                 String    @id @default(cuid())
-  ownerId            String    @unique
-  name               String
-  type               String    // nonprofit, charity, ngo, community_org, etc.
-  description        String?
-  logoUrl            String?
-  coverImageUrl      String?
-  website            String?
-  country            String?
-  city               String?
-  registrationInfo   String?
-  verificationStatus String    @default("pending") // pending, verified, rejected
-  socialLinks        String?   // JSON
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                 String   @id @default(cuid()) @map("id")
+  ownerId            String   @unique @map("ownerid")
+  name               String   @map("name")
+  type               String   @map("type") // nonprofit, charity, ngo, community_org, etc.
+  description        String?  @map("description")
+  logoUrl            String?  @map("logourl")
+  coverImageUrl      String?  @map("coverimageurl")
+  website            String?  @map("website")
+  country            String?  @map("country")
+  city               String?  @map("city")
+  registrationInfo   String?  @map("registrationinfo")
+  verificationStatus String   @default("pending") @map("verificationstatus") // pending, verified, rejected
+  socialLinks        String?  @map("sociallinks") // JSON
+  createdAt          DateTime @default(now()) @map("createdat")
+  updatedAt          DateTime @updatedAt @map("updatedat")
 
   owner User @relation(fields: [ownerId], references: [id])
 
   @@index([ownerId])
   @@index([verificationStatus])
+  @@map("organization")
 }
 
 // ===== WITHDRAWAL REQUEST =====
 
 model WithdrawalRequest {
-  id              String    @id @default(cuid())
-  campaignId      String
-  requesterId     String
-  amount          Float
-  status          String    @default("requested") // requested, under_review, documents_required, approved, processing, paid, rejected, suspended
-  bankDetails     String?   // JSON — sensitive
-  rejectionReason String?
-  reviewerId      String?
-  reviewedAt      DateTime?
-  reviewNotes     String?
-  paymentReference String?
-  paidAt          DateTime?
-  requestedAt     DateTime  @default(now())
-  processedAt     DateTime?
+  id               String    @id @default(cuid()) @map("id")
+  campaignId       String    @map("campaignid")
+  requesterId      String    @map("requesterid")
+  amount           Float     @map("amount")
+  status           String    @default("requested") @map("status") // requested, under_review, documents_required, approved, processing, paid, rejected, suspended
+  bankDetails      String?   @map("bankdetails") // JSON — sensitive
+  rejectionReason  String?   @map("rejectionreason")
+  reviewerId       String?   @map("reviewerid")
+  reviewedAt       DateTime? @map("reviewedat")
+  reviewNotes      String?   @map("reviewnotes")
+  paymentReference String?   @map("paymentreference")
+  paidAt           DateTime? @map("paidat")
+  requestedAt      DateTime  @default(now()) @map("requestedat")
+  processedAt      DateTime? @map("processedat")
 
   campaign  Campaign @relation(fields: [campaignId], references: [id])
   requester User     @relation(fields: [requesterId], references: [id])
@@ -207,23 +212,24 @@ model WithdrawalRequest {
   @@index([campaignId])
   @@index([requesterId])
   @@index([status])
+  @@map("withdrawalrequest")
 }
 
 // ===== REPORT =====
 
 model Report {
-  id          String    @id @default(cuid())
-  campaignId  String
-  reporterId  String
-  reason      String
-  description String?
-  status      String    @default("new") // new, under_review, resolved, dismissed, escalated
-  riskLevel   String    @default("medium") // low, medium, high — internal
-  adminNotes  String?
-  reviewerId  String?
-  reviewedAt  DateTime?
-  resolvedAt  DateTime?
-  createdAt   DateTime  @default(now())
+  id          String    @id @default(cuid()) @map("id")
+  campaignId  String    @map("campaignid")
+  reporterId  String    @map("reporterid")
+  reason      String    @map("reason")
+  description String?   @map("description")
+  status      String    @default("new") @map("status") // new, under_review, resolved, dismissed, escalated
+  riskLevel   String    @default("medium") @map("risklevel") // low, medium, high — internal
+  adminNotes  String?   @map("adminnotes")
+  reviewerId  String?   @map("reviewerid")
+  reviewedAt  DateTime? @map("reviewedat")
+  resolvedAt  DateTime? @map("resolvedat")
+  createdAt   DateTime  @default(now()) @map("createdat")
 
   campaign Campaign @relation(fields: [campaignId], references: [id])
   reporter User     @relation(fields: [reporterId], references: [id])
@@ -232,122 +238,131 @@ model Report {
   @@index([campaignId])
   @@index([reporterId])
   @@index([status])
+  @@map("report")
 }
 
 // ===== CATEGORY =====
 
 model Category {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  description String?
-  icon        String?
-  active      Boolean  @default(true)
-  sortOrder   Int      @default(0)
+  id          String  @id @default(cuid()) @map("id")
+  name        String  @map("name")
+  slug        String  @unique @map("slug")
+  description String? @map("description")
+  icon        String? @map("icon")
+  active      Boolean @default(true) @map("active")
+  sortOrder   Int     @default(0) @map("sortorder")
 
   campaigns Campaign[]
 
   @@index([slug])
   @@index([active])
+  @@map("category")
 }
 
 // ===== AUDIT LOG =====
 
 model AuditLog {
-  id            String   @id @default(cuid())
-  adminId       String?
-  action        String
-  entityType    String
-  entityId      String?
-  previousValue String?  // JSON
-  newValue      String?  // JSON
-  metadata      String?  // JSON
-  createdAt     DateTime @default(now())
+  id            String   @id @default(cuid()) @map("id")
+  adminId       String?  @map("adminid")
+  action        String   @map("action")
+  entityType    String   @map("entitytype")
+  entityId      String?  @map("entityid")
+  previousValue String?  @map("previousvalue") // JSON
+  newValue      String?  @map("newvalue") // JSON
+  metadata      String?  @map("metadata") // JSON
+  createdAt     DateTime @default(now()) @map("createdat")
 
   admin User? @relation(fields: [adminId], references: [id])
 
   @@index([adminId])
   @@index([entityType])
   @@index([createdAt])
+  @@map("auditlog")
 }
 
 // ===== FAVORITE =====
 
 model Favorite {
-  id         String   @id @default(cuid())
-  campaignId String
-  userId     String?
-  createdAt  DateTime @default(now())
+  id         String   @id @default(cuid()) @map("id")
+  campaignId String   @map("campaignid")
+  userId     String?  @map("userid")
+  createdAt  DateTime @default(now()) @map("createdat")
 
   campaign Campaign @relation(fields: [campaignId], references: [id])
   user     User?    @relation(fields: [userId], references: [id])
 
   @@index([campaignId])
   @@index([userId])
+  @@map("favorite")
 }
 
 // ===== PLATFORM SETTINGS =====
 
 model PlatformSettings {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     String?
-  updatedAt DateTime @updatedAt
+  id        String   @id @default(cuid()) @map("id")
+  key       String   @unique @map("key")
+  value     String?  @map("value")
+  updatedAt DateTime @updatedAt @map("updatedat")
+
+  @@map("platformsettings")
 }
 
 // ===== GEOGRAPHY =====
 
 model Country {
-  id             String   @id @default(cuid())
-  name           String
-  code           String   @unique
-  currency       String?
-  currencySymbol String?
-  active         Boolean  @default(true)
+  id             String  @id @default(cuid()) @map("id")
+  name           String  @map("name")
+  code           String  @unique @map("code")
+  currency       String? @map("currency")
+  currencySymbol String? @map("currencysymbol")
+  active         Boolean @default(true) @map("active")
 
   states State[]
 
   @@index([code])
+  @@map("country")
 }
 
 model State {
-  id        String  @id @default(cuid())
-  name      String
-  countryId String
-  code      String?
+  id        String  @id @default(cuid()) @map("id")
+  name      String  @map("name")
+  countryId String  @map("countryid")
+  code      String? @map("code")
 
   country Country @relation(fields: [countryId], references: [id])
   cities  City[]
 
   @@index([countryId])
+  @@map("state")
 }
 
 model City {
-  id      String @id @default(cuid())
-  name    String
-  stateId String
+  id      String @id @default(cuid()) @map("id")
+  name    String @map("name")
+  stateId String @map("stateid")
 
   state State @relation(fields: [stateId], references: [id])
 
   @@index([stateId])
+  @@map("city")
 }
 
 // ===== PHASE 4: TRUST, VERIFICATION, ANTI-FRAUD & COMPLIANCE =====
 
 model Verification {
-  id              String    @id @default(cuid())
-  userId          String
-  level           String    // basic, identity, beneficiary, organization
-  status          String    @default("not_started") // not_started, pending, documents_submitted, under_review, verified, rejected, expired, suspended
-  submittedAt     DateTime?
-  reviewedAt      DateTime?
-  reviewerId      String?
-  reviewNotes     String?
-  rejectionReason String?
-  expiryDate      DateTime?
-  documents       String?   // JSON — private document refs
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id              String    @id @default(cuid()) @map("id")
+  userId          String    @map("userid")
+  level           String    @map("level") // basic, identity, beneficiary, organization
+  status          String    @default("not_started") @map("status") // not_started, pending, documents_submitted, under_review, verified, rejected, expired, suspended
+  submittedAt     DateTime? @map("submittedat")
+  reviewedAt      DateTime? @map("reviewedat")
+  reviewerId      String?   @map("reviewerid")
+  reviewNotes     String?   @map("reviewnotes")
+  rejectionReason String?   @map("rejectionreason")
+  expiryDate      DateTime? @map("expirydate")
+  documents       String?   @map("documents") // JSON — private document refs
+  createdAt       DateTime  @default(now()) @map("createdat")
+  updatedAt       DateTime  @updatedAt @map("updatedat")
 
   user     User  @relation(fields: [userId], references: [id])
   reviewer User? @relation("VerificationReviewer", fields: [reviewerId], references: [id])
@@ -355,96 +370,101 @@ model Verification {
   @@index([userId])
   @@index([status])
   @@index([level])
+  @@map("verification")
 }
 
 model RiskEvent {
-  id          String   @id @default(cuid())
-  userId      String?
-  campaignId  String?
-  eventType   String
-  severity    String   @default("medium") // low, medium, high
-  description String
-  metadata    String?  // JSON
-  resolvedAt  DateTime?
-  resolvedBy  String?
-  createdAt   DateTime  @default(now())
+  id          String    @id @default(cuid()) @map("id")
+  userId      String?   @map("userid")
+  campaignId  String?   @map("campaignid")
+  eventType   String    @map("eventtype")
+  severity    String    @default("medium") @map("severity") // low, medium, high
+  description String    @map("description")
+  metadata    String?   @map("metadata") // JSON
+  resolvedAt  DateTime? @map("resolvedat")
+  resolvedBy  String?   @map("resolvedby")
+  createdAt   DateTime  @default(now()) @map("createdat")
 
-  user     User?    @relation(fields: [userId], references: [id])
+  user     User?     @relation(fields: [userId], references: [id])
   campaign Campaign? @relation(fields: [campaignId], references: [id])
-  resolver User?    @relation("RiskEventResolver", fields: [resolvedBy], references: [id])
+  resolver User?     @relation("RiskEventResolver", fields: [resolvedBy], references: [id])
 
   @@index([userId])
   @@index([campaignId])
   @@index([severity])
   @@index([createdAt])
+  @@map("riskevent")
 }
 
 model Notification {
-  id         String   @id @default(cuid())
-  userId     String
-  type       String
-  title      String
-  message    String
-  entityType String?  // campaign, withdrawal, verification, report
-  entityId   String?
-  isRead     Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id         String   @id @default(cuid()) @map("id")
+  userId     String   @map("userid")
+  type       String   @map("type")
+  title      String   @map("title")
+  message    String   @map("message")
+  entityType String?  @map("entitytype") // campaign, withdrawal, verification, report
+  entityId   String?  @map("entityid")
+  isRead     Boolean  @default(false) @map("isread")
+  createdAt  DateTime @default(now()) @map("createdat")
 
   user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([isRead])
   @@index([createdAt])
+  @@map("notification")
 }
 
 model CampaignEdit {
-  id          String   @id @default(cuid())
-  campaignId  String
-  field       String
-  oldValue    String?  // JSON or plain text
-  newValue    String?  // JSON or plain text
-  status      String   @default("pending") // pending, approved, rejected
-  reviewerId  String?
-  reviewedAt  DateTime?
-  reviewNotes String?
-  createdAt   DateTime  @default(now())
+  id          String    @id @default(cuid()) @map("id")
+  campaignId  String    @map("campaignid")
+  field       String    @map("field")
+  oldValue    String?   @map("oldvalue") // JSON or plain text
+  newValue    String?   @map("newvalue") // JSON or plain text
+  status      String    @default("pending") @map("status") // pending, approved, rejected
+  reviewerId  String?   @map("reviewerid")
+  reviewedAt  DateTime? @map("reviewedat")
+  reviewNotes String?   @map("reviewnotes")
+  createdAt   DateTime  @default(now()) @map("createdat")
 
   campaign Campaign @relation(fields: [campaignId], references: [id])
   reviewer User?    @relation("CampaignEditReviewer", fields: [reviewerId], references: [id])
 
   @@index([campaignId])
   @@index([status])
+  @@map("campaignedit")
 }
 
 model FundUsageItem {
-  id         String   @id @default(cuid())
-  campaignId String
-  category   String
-  amount     Float
-  description String?
-  sortOrder  Int      @default(0)
-  createdAt  DateTime @default(now())
+  id          String   @id @default(cuid()) @map("id")
+  campaignId  String   @map("campaignid")
+  category    String   @map("category")
+  amount      Float    @map("amount")
+  description String?  @map("description")
+  sortOrder   Int      @default(0) @map("sortorder")
+  createdAt   DateTime @default(now()) @map("createdat")
 
   campaign Campaign @relation(fields: [campaignId], references: [id])
 
   @@index([campaignId])
+  @@map("fundusageitem")
 }
 
 model PrivateDocument {
-  id           String   @id @default(cuid())
-  entityType   String   // verification, campaign, withdrawal, organization, beneficiary
-  entityId     String
-  documentType String   // identity_proof, address_proof, organization_registration, medical_document, expense_proof, bank_document, beneficiary_proof, other
-  fileName     String
-  fileSize     Int?
-  mimeType     String?
-  storagePath  String   // Supabase Storage path — never exposed via public URL
-  storageBucket String  @default("private-documents")
-  uploadedById String?
-  accessLevel  String   @default("admin_only") // admin_only, reviewer_only
-  status       String   @default("pending") // pending, approved, rejected
-  reviewNotes  String?
-  createdAt    DateTime @default(now())
+  id            String   @id @default(cuid()) @map("id")
+  entityType    String   @map("entitytype") // verification, campaign, withdrawal, organization, beneficiary
+  entityId      String   @map("entityid")
+  documentType  String   @map("documenttype") // identity_proof, address_proof, organization_registration, medical_document, expense_proof, bank_document, beneficiary_proof, other
+  fileName      String   @map("filename")
+  fileSize      Int?     @map("filesize")
+  mimeType      String?  @map("mimetype")
+  storagePath   String   @map("storagepath") // Supabase Storage path — never exposed via public URL
+  storageBucket String   @default("private-documents") @map("storagebucket")
+  uploadedById  String?  @map("uploadedbyid")
+  accessLevel   String   @default("admin_only") @map("accesslevel") // admin_only, reviewer_only
+  status        String   @default("pending") @map("status") // pending, approved, rejected
+  reviewNotes   String?  @map("reviewnotes")
+  createdAt     DateTime @default(now()) @map("createdat")
 
   uploadedBy User? @relation("DocumentUploader", fields: [uploadedById], references: [id])
 
@@ -452,19 +472,20 @@ model PrivateDocument {
   @@index([entityId])
   @@index([uploadedById])
   @@index([status])
+  @@map("privatedocument")
 }
 
 model InfoRequest {
-  id               String   @id @default(cuid())
-  campaignId       String
-  requesterId      String   // admin who requested
-  message          String
-  requiredDocuments String?  // JSON array
-  dueDate          DateTime?
-  status           String   @default("pending") // pending, responded, resolved, cancelled
-  responseMessage  String?
-  respondedAt      DateTime?
-  createdAt        DateTime @default(now())
+  id                String    @id @default(cuid()) @map("id")
+  campaignId        String    @map("campaignid")
+  requesterId       String    @map("requesterid") // admin who requested
+  message           String    @map("message")
+  requiredDocuments String?   @map("requireddocuments") // JSON array
+  dueDate           DateTime? @map("duedate")
+  status            String    @default("pending") @map("status") // pending, responded, resolved, cancelled
+  responseMessage   String?   @map("responsemessage")
+  respondedAt       DateTime? @map("respondedat")
+  createdAt         DateTime  @default(now()) @map("createdat")
 
   campaign  Campaign @relation(fields: [campaignId], references: [id])
   requester User     @relation("InfoRequester", fields: [requesterId], references: [id])
@@ -472,4 +493,5 @@ model InfoRequest {
   @@index([campaignId])
   @@index([requesterId])
   @@index([status])
+  @@map("inforequest")
 }
