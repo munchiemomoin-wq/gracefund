@@ -58,7 +58,6 @@ export function ReportModal() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           campaignId: reportCampaignId,
-          reporterId: 'demo-user',
           reason,
           description,
         }),

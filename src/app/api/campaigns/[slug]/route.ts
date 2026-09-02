@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { getCurrentUser, requireAuth, requireOwnership, AuthError } from '@/lib/auth';
 
 export async function GET(
   request: Request,
@@ -7,25 +8,28 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
+    const user = await getCurrentUser();
+
     const campaign = await db.campaign.findUnique({
       where: { slug },
       include: {
         category: true,
-        organizer: { select: { id: true, name: true, avatarUrl: true, role: true } },
-        updates: { orderBy: { createdAt: 'desc' } },
+        organizer: { select: { id: true, name: true, avatarUrl: true, role: true, verificationLevel: true } },
+        updates: {
+          where: { status: 'published' },
+          orderBy: { createdAt: 'desc' },
+        },
         donations: {
-          where: { paymentStatus: 'completed' },
+          where: { paymentStatus: { in: ['completed', 'succeeded'] } },
           orderBy: { createdAt: 'desc' },
           take: 20,
+          select: {
+            id: true, donorName: true, amount: true, donorMessage: true,
+            isAnonymous: true, showNamePublicly: true, createdAt: true,
+          },
         },
         fundUsageItems: {
-          select: {
-            id: true,
-            category: true,
-            amount: true,
-            description: true,
-            sortOrder: true,
-          },
+          select: { id: true, category: true, amount: true, description: true, sortOrder: true },
           orderBy: { sortOrder: 'asc' },
         },
         reports: {
@@ -40,8 +44,18 @@ export async function GET(
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
     }
 
-    // Add computed openReportsCount
-    const { reports, ...rest } = campaign;
+    // Only published campaigns are publicly accessible
+    // (organizers can see their own drafts)
+    if (campaign.status !== 'published') {
+      if (!user || (campaign.organizerId !== user.id && user.role !== 'admin')) {
+        return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
+      }
+    }
+
+    // Increment view count (fire-and-forget)
+    db.campaign.update({ where: { id: campaign.id }, data: { viewCount: { increment: 1 } } }).catch(() => {});
+
+    const { reports, riskLevel, investigationSettings, reviewNotes, rejectionReason, ...rest } = campaign;
     const result = {
       ...rest,
       openReportsCount: reports.length,

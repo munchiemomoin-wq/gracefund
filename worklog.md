@@ -1,35 +1,36 @@
-# GraceFund Work Log
-
 ---
-Task ID: 4
-Agent: Main Agent
-Task: Phase 4 — Trust, Verification, Anti-Fraud & Compliance System
+Task ID: 1
+Agent: main
+Task: GraceFund Phase 5 — Supabase Real Backend + Secure Documents + Donation & Platform Tip Architecture
 
 Work Log:
-- Explored and read entire existing codebase (schema, seed, all components, all API routes, store)
-- Updated Prisma schema: added 7 new models (Verification, RiskEvent, Notification, CampaignEdit, FundUsageItem, PrivateDocument, InfoRequest)
-- Updated existing models: User (new relations + status enum), Campaign (new fields + relations), WithdrawalRequest (new statuses + reviewer), Report (new statuses + reviewer + riskLevel), AuditLog (previousValue + newValue)
-- Ran Prisma migration (phase4_trust_verification_compliance) successfully
-- Rewrote seed script with comprehensive demo data: 9 campaigns (7 published + 2 under review), 9 fund usage items, 3 reports, 4 verifications, 4 withdrawal requests, 3 risk events, 7 notifications, 6 audit logs, 1 info request, 5 private documents, 13 platform settings
-- Updated app-store.ts: added AdminSubView type (16 views), trust-safety view, report modal state
-- Created 11 new API routes: reports (GET/POST), reports/[id] (PUT), verifications (GET/POST), verifications/[id] (PUT), reviews (GET), reviews/[id] (PUT), notifications (GET), notifications/[id] (PUT), audit-logs (GET), risk-events (GET), withdrawals (GET), withdrawals/[id] (PUT)
-- Extended 2 existing API routes: stats (6 new compliance fields), campaigns/[slug] (fundUsageItems + openReportsCount)
-- Created TrustSafetyPage component (public trust & safety page)
-- Created ReportModal component (report campaign dialog)
-- Updated CampaignDetail: verification level badges (5 levels), investigation banner, fund usage section, trust transparency bar, report button, view count, donation transparency notice
-- Updated page.tsx: added trust-safety view and ReportModal
-- Updated footer.tsx: Trust & Safety link navigates to trust-safety view
-- Rewrote AdminDashboard with 16 sub-views: Overview, Campaigns, Review Queue, Donations, Withdrawals, Users, Organizations, Categories, Verification, Reports, Compliance, Featured, Analytics, Payment Settings, Platform Settings, Audit Logs
-- Updated layout.tsx: added trust/verification SEO keywords
-- Created .env.example with all configuration variables
+- Installed @supabase/supabase-js and @supabase/ssr
+- Created Supabase client utilities: browser client, server client, admin client (service role)
+- Created Supabase middleware for session refresh
+- Updated Prisma schema from SQLite to PostgreSQL with: UUID-ready IDs, authUserId field, platformTipAmount, paymentTotalAmount, paymentOrderId, paymentTransactionId, providerResponse, idempotencyKey, storageBucket fields, indexes on all foreign keys and query fields
+- Created comprehensive RLS SQL migration with 40+ policies, helper functions (is_admin, current_app_user_id, current_user_role)
+- Created auth utility library (lib/auth.ts) with getCurrentUser, requireAuth, requireAdmin, requireRole, requireOwnership, createAuditLog, AuthError
+- Created 5 auth API routes: signup, login, logout, session, callback
+- Created 2 document API routes: upload (with MIME/size validation), signed URL generation
+- Updated all 18 existing API routes with server-side auth enforcement
+- Updated donation API with platform_tip_amount separation, payment statuses (pending/processing/succeeded/failed/cancelled/refunded), idempotency keys, test mode detection
+- Updated Zustand store with AuthState (user, isLoading)
+- Rewrote auth-modal for real Supabase Auth (login, register, password reset)
+- Rewrote donation-modal with fixed tip amounts (₹0/₹25/₹50/₹100/Custom), clear separation of campaign donation vs GraceFund contribution
+- Rewrote header with real auth state display, user menu, dynamic dashboard routing, logout
+- Removed all client-provided reviewerId/reporterId (now server-derived from auth)
+- Updated report-modal to not send client-provided reporterId
+- Created .env.example with all Supabase variables
+- Updated db.ts for PostgreSQL compatibility
+- All lint checks pass
 
 Stage Summary:
-- Build passes with all 20 API routes
-- ESLint: 0 errors in project code
-- TypeScript: 0 errors in project code
-- Database: 21 tables, migration applied, seed data verified
-- All existing functionality preserved (home, explore, campaign detail, create campaign, donor/fundraiser dashboards, donation modal, auth modal)
-- No religious/faith-based content added
-- No unsupported legal claims in Trust & Safety page
-- Risk scores are internal only (never exposed publicly)
-- International donations remain disabled by default
+- 21 database tables preserved and enhanced for PostgreSQL
+- 25+ API routes with server-side auth enforcement
+- Supabase Auth integration (signup, login, logout, session, password reset)
+- RLS policies for all sensitive tables
+- Document upload + signed URL system
+- Platform tip architecture (separate from campaign donations)
+- Payment status workflow (pending → processing → succeeded/failed/cancelled/refunded)
+- Webhook-ready architecture with idempotency keys
+- Financial reporting separation (campaign donations vs platform tips vs refunds)

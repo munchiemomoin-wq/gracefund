@@ -29,12 +29,31 @@ export type AdminSubView =
   | 'platform-settings'
   | 'audit-logs';
 
+export interface AuthState {
+  user: {
+    id: string;
+    email: string;
+    name: string | null;
+    avatarUrl?: string | null;
+    role: string;
+    status: string;
+    verificationLevel: string;
+  } | null;
+  isLoading: boolean;
+}
+
 interface AppState {
+  // Navigation
   currentView: AppView;
   adminSubView: AdminSubView;
   selectedCampaignSlug: string | null;
   searchQuery: string;
   selectedCategory: string | null;
+
+  // Auth
+  auth: AuthState;
+
+  // Modals
   showAuthModal: boolean;
   authMode: 'login' | 'register';
   showDonationModal: boolean;
@@ -42,6 +61,8 @@ interface AppState {
   showMobileMenu: boolean;
   showReportModal: boolean;
   reportCampaignId: string | null;
+
+  // Actions
   setCurrentView: (view: AppView) => void;
   setAdminSubView: (view: AdminSubView) => void;
   setSelectedCampaign: (slug: string) => void;
@@ -51,6 +72,9 @@ interface AppState {
   setShowDonationModal: (show: boolean, campaignId?: string) => void;
   setShowMobileMenu: (show: boolean) => void;
   setShowReportModal: (show: boolean, campaignId?: string) => void;
+  setAuth: (user: AuthState['user']) => void;
+  clearAuth: () => void;
+  setAuthLoading: (loading: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -59,6 +83,7 @@ export const useAppStore = create<AppState>((set) => ({
   selectedCampaignSlug: null,
   searchQuery: '',
   selectedCategory: null,
+  auth: { user: null, isLoading: true },
   showAuthModal: false,
   authMode: 'login',
   showDonationModal: false,
@@ -66,6 +91,7 @@ export const useAppStore = create<AppState>((set) => ({
   showMobileMenu: false,
   showReportModal: false,
   reportCampaignId: null,
+
   setCurrentView: (view) => set({ currentView: view }),
   setAdminSubView: (view) => set({ adminSubView: view }),
   setSelectedCampaign: (slug) => set({ selectedCampaignSlug: slug, currentView: 'campaign' }),
@@ -75,4 +101,7 @@ export const useAppStore = create<AppState>((set) => ({
   setShowDonationModal: (show, campaignId) => set({ showDonationModal: show, donationCampaignId: campaignId || null }),
   setShowMobileMenu: (show) => set({ showMobileMenu: show }),
   setShowReportModal: (show, campaignId) => set({ showReportModal: show, reportCampaignId: campaignId || null }),
+  setAuth: (user) => set({ auth: { user, isLoading: false } }),
+  clearAuth: () => set({ auth: { user: null, isLoading: false } }),
+  setAuthLoading: (isLoading) => set((s) => ({ auth: { ...s.auth, isLoading } })),
 }));

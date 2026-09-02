@@ -1,11 +1,14 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { requireAdmin, AuthError } from '@/lib/auth';
 
+// Admin-only: platform stats with financial breakdown
 export async function GET() {
   try {
+    const admin = await requireAdmin();
     const [
       totalRaised,
-      peopleHelped,
+      totalDonors,
       activeCampaigns,
       countryCount,
       pendingVerifications,
@@ -14,9 +17,14 @@ export async function GET() {
       openReports,
       pendingWithdrawals,
       suspendedUsers,
+      totalTips,
+      totalRefunds,
     ] = await Promise.all([
-      db.campaign.aggregate({ _sum: { raisedAmount: true }, where: { status: 'published' } }),
-      db.campaign.aggregate({ _sum: { donorCount: true }, where: { status: 'published' } }),
+      db.donation.aggregate({
+        _sum: { amount: true },
+        where: { paymentStatus: { in: ['completed', 'succeeded'] } },
+      }),
+      db.donation.groupBy({ by: ['donorId'], where: { paymentStatus: { in: ['completed', 'succeeded'] } } }),
       db.campaign.count({ where: { status: 'published' } }),
       db.country.count({ where: { active: true } }),
       db.verification.count({ where: { status: { in: ['pending', 'documents_submitted', 'under_review'] } } }),
@@ -25,11 +33,19 @@ export async function GET() {
       db.report.count({ where: { status: { in: ['new', 'under_review'] } } }),
       db.withdrawalRequest.count({ where: { status: { in: ['requested', 'under_review'] } } }),
       db.user.count({ where: { status: { in: ['suspended', 'banned'] } } }),
+      db.donation.aggregate({
+        _sum: { platformTipAmount: true },
+        where: { paymentStatus: { in: ['completed', 'succeeded'] }, platformTipAmount: { gt: 0 } },
+      }),
+      db.donation.aggregate({
+        _sum: { amount: true },
+        where: { paymentStatus: 'refunded' },
+      }),
     ]);
 
     return NextResponse.json({
-      totalRaised: totalRaised._sum.raisedAmount || 0,
-      peopleHelped: peopleHelped._sum.donorCount || 0,
+      totalRaised: totalRaised._sum.amount || 0,
+      peopleHelped: totalDonors.length,
       activeCampaigns,
       countriesReached: countryCount,
       pendingVerifications,
@@ -38,8 +54,14 @@ export async function GET() {
       openReports,
       pendingWithdrawals,
       suspendedUsers,
+      totalPlatformTips: totalTips._sum.platformTipAmount || 0,
+      totalRefunds: totalRefunds._sum.amount || 0,
+      netPlatformRevenue: (totalTips._sum.platformTipAmount || 0),
     });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Error fetching stats:', error);
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
   }

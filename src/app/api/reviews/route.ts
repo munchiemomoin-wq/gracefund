@@ -1,8 +1,12 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin, AuthError } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
+    // Admin-only: review queue
+    const admin = await requireAdmin();
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const sort = searchParams.get('sort');
@@ -20,8 +24,6 @@ export async function GET(request: NextRequest) {
       orderBy = { submittedAt: 'asc' };
     } else if (sort === 'highest_amount') {
       orderBy = { goalAmount: 'desc' };
-    } else {
-      orderBy = { submittedAt: 'desc' };
     }
 
     const campaigns = await db.campaign.findMany({
@@ -36,6 +38,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(campaigns);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Error fetching review queue:', error);
     return NextResponse.json({ error: 'Failed to fetch review queue' }, { status: 500 });
   }

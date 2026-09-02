@@ -1,20 +1,14 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth, AuthError } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await requireAuth();
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
     const unread = searchParams.get('unread');
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'userId query param is required' },
-        { status: 400 }
-      );
-    }
-
-    const where: Record<string, unknown> = { userId };
+    const where: Record<string, unknown> = { userId: user.id };
     if (unread === 'true') {
       where.isRead = false;
     }
@@ -22,10 +16,14 @@ export async function GET(request: NextRequest) {
     const notifications = await db.notification.findMany({
       where,
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     return NextResponse.json(notifications);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Error fetching notifications:', error);
     return NextResponse.json({ error: 'Failed to fetch notifications' }, { status: 500 });
   }

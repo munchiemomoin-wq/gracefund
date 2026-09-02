@@ -381,7 +381,7 @@ function ReviewQueueView() {
       await fetch(`/api/reviews/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, reviewerId: REVIEWER_ID }),
+        body: JSON.stringify({ action }),
       });
       fetchCampaigns();
     } catch {
@@ -524,7 +524,7 @@ function ReportsView() {
       await fetch(`/api/reports/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, adminNotes, reviewerId: REVIEWER_ID }),
+        body: JSON.stringify({ status, adminNotes }),
       });
       fetchReports(filter);
     } catch {
@@ -817,7 +817,7 @@ function VerificationView() {
       await fetch(`/api/verifications/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, reviewerId: REVIEWER_ID }),
+        body: JSON.stringify({ status }),
       });
       fetchVerifications();
     } catch {
@@ -963,7 +963,7 @@ function WithdrawalsView() {
       await fetch(`/api/withdrawals/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, reviewerId: REVIEWER_ID }),
+        body: JSON.stringify({ status }),
       });
       fetchWithdrawals(filter);
     } catch {
