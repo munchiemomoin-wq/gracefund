@@ -3,32 +3,35 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  phone         String?
-  avatarUrl     String?
-  role          String    @default("visitor") // visitor, donor, fundraiser, organization, admin
-  status        String    @default("active") // active, pending_verification, restricted, suspended, banned
-  verificationLevel String @default("none") // none, basic, identity, beneficiary, organization
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+// ===== CORE USER =====
 
-  campaigns     Campaign[]
-  donations     Donation[]
-  organization  Organization?
-  withdrawalRequests WithdrawalRequest[]
-  reports       Report[]
-  auditLogs     AuditLog[]
-  favorites     Favorite[]
-  verifications Verification[]
-  notifications Notification[]
-  riskEvents    RiskEvent[]
+model User {
+  id                String    @id @default(cuid())
+  authUserId        String?   @unique // Supabase Auth user ID — links to auth.users
+  name              String?
+  email             String    @unique
+  phone             String?
+  avatarUrl         String?
+  role              String    @default("visitor") // visitor, donor, fundraiser, organization, admin
+  status            String    @default("active") // active, pending_verification, restricted, suspended, banned
+  verificationLevel String    @default("none") // none, basic, identity, beneficiary, organization
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  campaigns            Campaign[]
+  donations            Donation[]
+  organization         Organization?
+  withdrawalRequests   WithdrawalRequest[]
+  reports              Report[]
+  auditLogs            AuditLog[]
+  favorites            Favorite[]
+  verifications        Verification[]
+  notifications        Notification[]
+  riskEvents           RiskEvent[]
   reviewedCampaigns    Campaign[]    @relation("CampaignReviewer")
   reviewedWithdrawals  WithdrawalRequest[] @relation("WithdrawalReviewer")
   reviewedReports      Report[]      @relation("ReportReviewer")
@@ -37,7 +40,14 @@ model User {
   reviewedCampaignEdits CampaignEdit[] @relation("CampaignEditReviewer")
   uploadedDocuments    PrivateDocument[] @relation("DocumentUploader")
   sentInfoRequests     InfoRequest[]  @relation("InfoRequester")
+
+  @@index([authUserId])
+  @@index([email])
+  @@index([role])
+  @@index([status])
 }
+
+// ===== CAMPAIGN =====
 
 model Campaign {
   id              String    @id @default(cuid())
@@ -61,14 +71,14 @@ model Campaign {
   isFeatured      Boolean   @default(false)
   isUrgent        Boolean   @default(false)
   campaignType    String    @default("individual") // individual, family, community, organization, charity
-  campaignFeatures String?   // JSON: { donor_messages, anonymous_donations, campaign_updates, beneficiary_verification, fund_usage }
+  campaignFeatures String?   // JSON
   coverImage      String?
   videoUrl        String?
   endDate         DateTime?
   donorCount      Int       @default(0)
   viewCount       Int       @default(0)
-  riskLevel       String    @default("low") // low, medium, high — INTERNAL ONLY, never exposed publicly
-  investigationSettings String? // JSON: { donations_paused, withdrawals_blocked, visible }
+  riskLevel       String    @default("low") // low, medium, high — INTERNAL ONLY
+  investigationSettings String? // JSON
   submittedAt     DateTime?
   reviewedAt      DateTime?
   reviewerId      String?
@@ -77,40 +87,61 @@ model Campaign {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  category        Category? @relation(fields: [categoryId], references: [id])
-  organizer       User?     @relation(fields: [organizerId], references: [id])
-  reviewer        User?     @relation("CampaignReviewer", fields: [reviewerId], references: [id])
-  donations       Donation[]
-  updates         CampaignUpdate[]
+  category           Category?     @relation(fields: [categoryId], references: [id])
+  organizer          User?         @relation(fields: [organizerId], references: [id])
+  reviewer           User?         @relation("CampaignReviewer", fields: [reviewerId], references: [id])
+  donations          Donation[]
+  updates            CampaignUpdate[]
   withdrawalRequests WithdrawalRequest[]
-  reports         Report[]
-  favorites       Favorite[]
-  fundUsageItems  FundUsageItem[]
-  campaignEdits   CampaignEdit[]
-  infoRequests    InfoRequest[]
-  riskEvents     RiskEvent[]
+  reports            Report[]
+  favorites          Favorite[]
+  fundUsageItems     FundUsageItem[]
+  campaignEdits      CampaignEdit[]
+  infoRequests       InfoRequest[]
+  riskEvents         RiskEvent[]
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([organizerId])
+  @@index([slug])
+  @@index([createdAt])
 }
+
+// ===== DONATION =====
 
 model Donation {
-  id                  String    @id @default(cuid())
-  campaignId          String
-  donorId             String?
-  donorName           String?
-  donorEmail          String?
-  amount              Float
-  currency            String    @default("INR")
-  platformFee         Float     @default(0)
-  paymentStatus       String    @default("pending") // pending, completed, failed, refunded
-  paymentProvider     String?
-  transactionReference String?
-  donorMessage        String?
-  isAnonymous         Boolean   @default(false)
-  showNamePublicly    Boolean   @default(true)
-  createdAt           DateTime  @default(now())
+  id                   String    @id @default(cuid())
+  campaignId           String
+  donorId              String?
+  donorName            String?
+  donorEmail           String?
+  amount               Float     // campaign donation amount ONLY
+  currency             String    @default("INR")
+  platformFee          Float     @default(0)
+  platformTipAmount    Float     @default(0) // GraceFund tip — separate from campaign amount
+  paymentTotalAmount   Float     // amount + platformTipAmount
+  paymentStatus        String    @default("pending") // pending, processing, succeeded, failed, cancelled, refunded
+  paymentProvider      String?   // razorpay, stripe, demo
+  paymentOrderId       String?   // payment provider order ID
+  paymentTransactionId String?
+  providerResponse     String?   // JSON — full provider response for audit
+  idempotencyKey       String?   @unique // prevents duplicate webhook processing
+  donorMessage         String?
+  isAnonymous          Boolean   @default(false)
+  showNamePublicly     Boolean   @default(true)
+  createdAt            DateTime  @default(now())
 
-  campaign            Campaign  @relation(fields: [campaignId], references: [id])
-  donor               User?     @relation(fields: [donorId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  donor    User?   @relation(fields: [donorId], references: [id])
+
+  @@index([campaignId])
+  @@index([donorId])
+  @@index([paymentStatus])
+  @@index([idempotencyKey])
+  @@index([createdAt])
 }
+
+// ===== CAMPAIGN UPDATE =====
 
 model CampaignUpdate {
   id        String   @id @default(cuid())
@@ -121,68 +152,89 @@ model CampaignUpdate {
   status    String   @default("published") // published, hidden, under_review
   createdAt DateTime @default(now())
 
-  campaign  Campaign @relation(fields: [campaignId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
 }
+
+// ===== ORGANIZATION =====
 
 model Organization {
-  id                  String    @id @default(cuid())
-  ownerId             String    @unique
-  name                String
-  type                String    // nonprofit, charity, ngo, community_org, social_enterprise, educational_org, healthcare_org, animal_welfare_org, other
-  description         String?
-  logoUrl             String?
-  coverImageUrl       String?
-  website             String?
-  country             String?
-  city                String?
-  registrationInfo    String?
-  verificationStatus  String    @default("pending") // pending, verified, rejected
-  socialLinks         String?   // JSON string
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  id                 String    @id @default(cuid())
+  ownerId            String    @unique
+  name               String
+  type               String    // nonprofit, charity, ngo, community_org, etc.
+  description        String?
+  logoUrl            String?
+  coverImageUrl      String?
+  website            String?
+  country            String?
+  city               String?
+  registrationInfo   String?
+  verificationStatus String    @default("pending") // pending, verified, rejected
+  socialLinks        String?   // JSON
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  owner               User      @relation(fields: [ownerId], references: [id])
+  owner User @relation(fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@index([verificationStatus])
 }
+
+// ===== WITHDRAWAL REQUEST =====
 
 model WithdrawalRequest {
-  id            String    @id @default(cuid())
-  campaignId    String
-  requesterId   String
-  amount        Float
-  status        String    @default("requested") // requested, under_review, documents_required, approved, processing, paid, rejected, suspended
-  bankDetails   String?   // JSON string - sensitive, never expose publicly
+  id              String    @id @default(cuid())
+  campaignId      String
+  requesterId     String
+  amount          Float
+  status          String    @default("requested") // requested, under_review, documents_required, approved, processing, paid, rejected, suspended
+  bankDetails     String?   // JSON — sensitive
   rejectionReason String?
-  reviewerId    String?
-  reviewedAt    DateTime?
-  reviewNotes   String?
+  reviewerId      String?
+  reviewedAt      DateTime?
+  reviewNotes     String?
   paymentReference String?
-  paidAt        DateTime?
-  requestedAt   DateTime  @default(now())
-  processedAt   DateTime?
+  paidAt          DateTime?
+  requestedAt     DateTime  @default(now())
+  processedAt     DateTime?
 
-  campaign      Campaign  @relation(fields: [campaignId], references: [id])
-  requester     User      @relation(fields: [requesterId], references: [id])
-  reviewer      User?     @relation("WithdrawalReviewer", fields: [reviewerId], references: [id])
+  campaign  Campaign @relation(fields: [campaignId], references: [id])
+  requester User     @relation(fields: [requesterId], references: [id])
+  reviewer  User?    @relation("WithdrawalReviewer", fields: [reviewerId], references: [id])
+
+  @@index([campaignId])
+  @@index([requesterId])
+  @@index([status])
 }
 
+// ===== REPORT =====
+
 model Report {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   campaignId  String
   reporterId  String
   reason      String
   description String?
-  status      String   @default("new") // new, under_review, resolved, dismissed, escalated
-  riskLevel   String   @default("medium") // low, medium, high — internal
+  status      String    @default("new") // new, under_review, resolved, dismissed, escalated
+  riskLevel   String    @default("medium") // low, medium, high — internal
   adminNotes  String?
   reviewerId  String?
   reviewedAt  DateTime?
   resolvedAt  DateTime?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
 
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-  reporter    User     @relation(fields: [reporterId], references: [id])
-  reviewer    User?     @relation("ReportReviewer", fields: [reviewerId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  reporter User     @relation(fields: [reporterId], references: [id])
+  reviewer User?    @relation("ReportReviewer", fields: [reviewerId], references: [id])
+
+  @@index([campaignId])
+  @@index([reporterId])
+  @@index([status])
 }
+
+// ===== CATEGORY =====
 
 model Category {
   id          String   @id @default(cuid())
@@ -193,179 +245,231 @@ model Category {
   active      Boolean  @default(true)
   sortOrder   Int      @default(0)
 
-  campaigns   Campaign[]
+  campaigns Campaign[]
+
+  @@index([slug])
+  @@index([active])
 }
+
+// ===== AUDIT LOG =====
 
 model AuditLog {
-  id          String   @id @default(cuid())
-  adminId     String?
-  action      String
-  entityType  String
-  entityId    String?
-  previousValue String? // JSON string
-  newValue    String?   // JSON string
-  metadata    String?  // JSON string
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  adminId       String?
+  action        String
+  entityType    String
+  entityId      String?
+  previousValue String?  // JSON
+  newValue      String?  // JSON
+  metadata      String?  // JSON
+  createdAt     DateTime @default(now())
 
-  admin       User?    @relation(fields: [adminId], references: [id])
+  admin User? @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([entityType])
+  @@index([createdAt])
 }
+
+// ===== FAVORITE =====
 
 model Favorite {
-  id          String   @id @default(cuid())
-  campaignId  String
-  userId      String?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  campaignId String
+  userId     String?
+  createdAt  DateTime @default(now())
 
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-  user        User?    @relation(fields: [userId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  user     User?    @relation(fields: [userId], references: [id])
+
+  @@index([campaignId])
+  @@index([userId])
 }
+
+// ===== PLATFORM SETTINGS =====
 
 model PlatformSettings {
-  id                  String   @id @default(cuid())
-  key                 String   @unique
-  value               String?
-  updatedAt           DateTime @updatedAt
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String?
+  updatedAt DateTime @updatedAt
 }
 
-model Country {
-  id          String   @id @default(cuid())
-  name        String
-  code        String   @unique
-  currency    String?
-  currencySymbol String?
-  active      Boolean  @default(true)
+// ===== GEOGRAPHY =====
 
-  states      State[]
+model Country {
+  id             String   @id @default(cuid())
+  name           String
+  code           String   @unique
+  currency       String?
+  currencySymbol String?
+  active         Boolean  @default(true)
+
+  states State[]
+
+  @@index([code])
 }
 
 model State {
-  id          String   @id @default(cuid())
-  name        String
-  countryId   String
-  code        String?
+  id        String  @id @default(cuid())
+  name      String
+  countryId String
+  code      String?
 
-  country     Country  @relation(fields: [countryId], references: [id])
-  cities      City[]
+  country Country @relation(fields: [countryId], references: [id])
+  cities  City[]
+
+  @@index([countryId])
 }
 
 model City {
-  id          String   @id @default(cuid())
-  name        String
-  stateId     String
+  id      String @id @default(cuid())
+  name    String
+  stateId String
 
-  state       State    @relation(fields: [stateId], references: [id])
+  state State @relation(fields: [stateId], references: [id])
+
+  @@index([stateId])
 }
 
 // ===== PHASE 4: TRUST, VERIFICATION, ANTI-FRAUD & COMPLIANCE =====
 
 model Verification {
-  id                String    @id @default(cuid())
-  userId            String
-  level             String    // basic, identity, beneficiary, organization
-  status            String    @default("not_started") // not_started, pending, documents_submitted, under_review, verified, rejected, expired, suspended
-  submittedAt       DateTime?
-  reviewedAt        DateTime?
-  reviewerId        String?
-  reviewNotes       String?
-  rejectionReason   String?
-  expiryDate        DateTime?
-  documents         String?   // JSON array of document references (private)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  userId          String
+  level           String    // basic, identity, beneficiary, organization
+  status          String    @default("not_started") // not_started, pending, documents_submitted, under_review, verified, rejected, expired, suspended
+  submittedAt     DateTime?
+  reviewedAt      DateTime?
+  reviewerId      String?
+  reviewNotes     String?
+  rejectionReason String?
+  expiryDate      DateTime?
+  documents       String?   // JSON — private document refs
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  user              User      @relation(fields: [userId], references: [id])
-  reviewer          User?     @relation("VerificationReviewer", fields: [reviewerId], references: [id])
+  user     User  @relation(fields: [userId], references: [id])
+  reviewer User? @relation("VerificationReviewer", fields: [reviewerId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([level])
 }
 
 model RiskEvent {
   id          String   @id @default(cuid())
   userId      String?
   campaignId  String?
-  eventType   String    // duplicate_phone, duplicate_identity, multiple_campaigns, suspicious_edit, unusual_activity, multiple_reports, verification_failure, goal_change, beneficiary_change
+  eventType   String
   severity    String   @default("medium") // low, medium, high
   description String
-  metadata    String?   // JSON string
+  metadata    String?  // JSON
   resolvedAt  DateTime?
   resolvedBy  String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
 
-  user        User?    @relation(fields: [userId], references: [id])
-  campaign    Campaign? @relation(fields: [campaignId], references: [id])
-  resolver    User?    @relation("RiskEventResolver", fields: [resolvedBy], references: [id])
+  user     User?    @relation(fields: [userId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  resolver User?    @relation("RiskEventResolver", fields: [resolvedBy], references: [id])
+
+  @@index([userId])
+  @@index([campaignId])
+  @@index([severity])
+  @@index([createdAt])
 }
 
 model Notification {
-  id          String   @id @default(cuid())
-  userId      String
-  type        String    // campaign_submitted, campaign_approved, campaign_rejected, info_requested, verification_approved, verification_rejected, withdrawal_status_changed, campaign_under_review, new_report, new_campaign_submitted, high_risk_detected, new_verification_submitted, withdrawal_requested
-  title       String
-  message     String
-  entityType  String?   // campaign, withdrawal, verification, report
-  entityId    String?
-  isRead      Boolean   @default(false)
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  title      String
+  message    String
+  entityType String?  // campaign, withdrawal, verification, report
+  entityId   String?
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
 
-  user        User      @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
 }
 
 model CampaignEdit {
   id          String   @id @default(cuid())
   campaignId  String
-  field       String    // title, story, goalAmount, beneficiaryName, beneficiaryRelationship, bankDetails
-  oldValue    String?   // JSON or plain text
-  newValue    String?   // JSON or plain text
-  status      String    @default("pending") // pending, approved, rejected
+  field       String
+  oldValue    String?  // JSON or plain text
+  newValue    String?  // JSON or plain text
+  status      String   @default("pending") // pending, approved, rejected
   reviewerId  String?
   reviewedAt  DateTime?
   reviewNotes String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
 
-  campaign    Campaign  @relation(fields: [campaignId], references: [id])
-  reviewer    User?     @relation("CampaignEditReviewer", fields: [reviewerId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  reviewer User?    @relation("CampaignEditReviewer", fields: [reviewerId], references: [id])
+
+  @@index([campaignId])
+  @@index([status])
 }
 
 model FundUsageItem {
-  id          String   @id @default(cuid())
-  campaignId  String
-  category    String    // e.g. Hospital Expenses, Medicines, Recovery Support
-  amount      Float
+  id         String   @id @default(cuid())
+  campaignId String
+  category   String
+  amount     Float
   description String?
-  sortOrder   Int       @default(0)
-  createdAt   DateTime @default(now())
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
 
-  campaign    Campaign  @relation(fields: [campaignId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
 }
 
 model PrivateDocument {
-  id          String   @id @default(cuid())
-  entityType  String    // verification, campaign, withdrawal, organization, beneficiary
-  entityId    String
-  documentType String  // identity_proof, address_proof, organization_registration, medical_document, expense_proof, bank_document, beneficiary_proof, other
-  fileName    String
-  fileSize    Int?
-  mimeType    String?
-  storagePath String    // private storage path — never exposed via public URL
+  id           String   @id @default(cuid())
+  entityType   String   // verification, campaign, withdrawal, organization, beneficiary
+  entityId     String
+  documentType String   // identity_proof, address_proof, organization_registration, medical_document, expense_proof, bank_document, beneficiary_proof, other
+  fileName     String
+  fileSize     Int?
+  mimeType     String?
+  storagePath  String   // Supabase Storage path — never exposed via public URL
+  storageBucket String  @default("private-documents")
   uploadedById String?
-  accessLevel String   @default("admin_only") // admin_only, reviewer_only
-  status      String    @default("pending") // pending, approved, rejected
-  reviewNotes String?
-  createdAt   DateTime @default(now())
+  accessLevel  String   @default("admin_only") // admin_only, reviewer_only
+  status       String   @default("pending") // pending, approved, rejected
+  reviewNotes  String?
+  createdAt    DateTime @default(now())
 
-  uploadedBy  User?     @relation("DocumentUploader", fields: [uploadedById], references: [id])
+  uploadedBy User? @relation("DocumentUploader", fields: [uploadedById], references: [id])
+
+  @@index([entityType])
+  @@index([entityId])
+  @@index([uploadedById])
+  @@index([status])
 }
 
 model InfoRequest {
-  id            String   @id @default(cuid())
-  campaignId    String
-  requesterId   String    // admin who requested
-  message       String
-  requiredDocuments String? // JSON array of required document types
-  dueDate       DateTime?
- status        String    @default("pending") // pending, responded, resolved, cancelled
-  responseMessage String?
-  respondedAt   DateTime?
-  createdAt     DateTime @default(now())
+  id               String   @id @default(cuid())
+  campaignId       String
+  requesterId      String   // admin who requested
+  message          String
+  requiredDocuments String?  // JSON array
+  dueDate          DateTime?
+  status           String   @default("pending") // pending, responded, resolved, cancelled
+  responseMessage  String?
+  respondedAt      DateTime?
+  createdAt        DateTime @default(now())
 
-  campaign      Campaign  @relation(fields: [campaignId], references: [id])
-  requester     User      @relation("InfoRequester", fields: [requesterId], references: [id])
+  campaign  Campaign @relation(fields: [campaignId], references: [id])
+  requester User     @relation("InfoRequester", fields: [requesterId], references: [id])
+
+  @@index([campaignId])
+  @@index([requesterId])
+  @@index([status])
 }
