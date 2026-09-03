@@ -1,0 +1,1390 @@
+     1→'use client';
+     2→
+     3→import { useAppStore } from '@/store/app-store';
+     4→import { Button } from '@/components/ui/button';
+     5→import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+     6→import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+     7→import { Badge } from '@/components/ui/badge';
+     8→import { Skeleton } from '@/components/ui/skeleton';
+     9→import { ScrollArea } from '@/components/ui/scroll-area';
+    10→import { ArrowLeft, Heart, DollarSign, FileText, Users, TrendingUp, Eye, Clock, AlertCircle, CheckCircle, BarChart3, Settings, Shield, Star, Flag, CreditCard, Globe, Bell, Lock, Scale, Search, Ban, ChevronRight, CircleDot, AlertTriangle, Activity, ClipboardList, UserCheck, LayoutDashboard, FolderOpen, Tag, Sparkles, TrendingDown, Wallet, XCircle, Info, Loader2, RefreshCw, HandHeart, PieChart } from 'lucide-react';
+    11→import { Progress } from '@/components/ui/progress';
+    12→import { formatCurrency, formatCompactCurrency, formatNumber } from '@/lib/currency';
+    13→import { useEffect, useState, useCallback } from 'react';
+    14→import type { AdminSubView } from '@/store/app-store';
+    15→import { GiveContributionsView, GiveAllocationsView, GiveBalancesView, GiveTransparencyView, GiveReportsView } from './admin-give-views';
+    16→
+    17→// ─────────────────────────────────────────────────────────────
+    18→// DonorDashboard (unchanged)
+    19→// ─────────────────────────────────────────────────────────────
+    20→
+    21→export function DonorDashboard() {
+    22→  const { setCurrentView } = useAppStore();
+    23→
+    24→  return (
+    25→    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+    26→      <button onClick={() => setCurrentView('home')} className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+    27→        <ArrowLeft className="h-4 w-4" /> Back to home
+    28→      </button>
+    29→      <h1 className="text-2xl font-bold">My Dashboard</h1>
+    30→      <p className="mt-1 text-muted-foreground">Track your donations and saved campaigns</p>
+    31→
+    32→      {/* Stats Cards */}
+    33→      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+    34→        <Card><CardContent className="p-5"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10"><Heart className="h-5 w-5 text-primary" /></div><div><p className="text-2xl font-bold">12</p><p className="text-xs text-muted-foreground">Total Donations</p></div></div></CardContent></Card>
+    35→        <Card><CardContent className="p-5"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--gold)]/10"><DollarSign className="h-5 w-5 text-[var(--gold)]" /></div><div><p className="text-2xl font-bold">₹24,500</p><p className="text-xs text-muted-foreground">Total Given</p></div></div></CardContent></Card>
+    36→        <Card><CardContent className="p-5"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100"><Star className="h-5 w-5 text-emerald-600" /></div><div><p className="text-2xl font-bold">5</p><p className="text-xs text-muted-foreground">Saved Campaigns</p></div></div></CardContent></Card>
+    37→      </div>
+    38→
+    39→      <Tabs defaultValue="donations" className="mt-8">
+    40→        <TabsList><TabsTrigger value="donations">Donation History</TabsTrigger><TabsTrigger value="saved">Saved Campaigns</TabsTrigger></TabsList>
+    41→        <TabsContent value="donations" className="mt-4">
+    42→          <Card>
+    43→            <CardContent className="p-0">
+    44→              <div className="divide-y">
+    45→                {[
+    46→                  { title: 'Help a Student Continue Her Education', amount: '₹2,500', date: 'Aug 28, 2026', status: 'Completed' },
+    47→                  { title: 'Emergency Medical Treatment for a Father', amount: '₹5,000', date: 'Aug 25, 2026', status: 'Completed' },
+    48→                  { title: 'Support a Family After a House Fire', amount: '₹1,000', date: 'Aug 20, 2026', status: 'Completed' },
+    49→                  { title: 'Provide School Supplies for Children', amount: '₹10,000', date: 'Aug 15, 2026', status: 'Completed' },
+    50→                  { title: 'Community Food Distribution Project', amount: '₹5,000', date: 'Aug 10, 2026', status: 'Completed' },
+    51→                  { title: 'Animal Rescue and Veterinary Care', amount: '₹1,000', date: 'Aug 5, 2026', status: 'Completed' },
+    52→                ].map((d, i) => (
+    53→                  <div key={i} className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors">
+    54→                    <div className="min-w-0 flex-1">
+    55→                      <p className="text-sm font-medium truncate">{d.title}</p>
+    56→                      <p className="text-xs text-muted-foreground">{d.date}</p>
+    57→                    </div>
+    58→                    <div className="text-right ml-4">
+    59→                      <p className="text-sm font-semibold">{d.amount}</p>
+    60→                      <span className="text-xs text-emerald-600 flex items-center gap-1 justify-end"><CheckCircle className="h-3 w-3" />{d.status}</span>
+    61→                    </div>
+    62→                  </div>
+    63→                ))}
+    64→              </div>
+    65→            </CardContent>
+    66→          </Card>
+    67→        </TabsContent>
+    68→        <TabsContent value="saved" className="mt-4">
+    69→          <div className="rounded-xl border bg-muted/20 p-8 text-center">
+    70→            <Star className="mx-auto h-10 w-10 text-muted-foreground/30" />
+    71→            <p className="mt-3 text-sm text-muted-foreground">Save campaigns to follow their progress</p>
+    72→            <Button variant="outline" className="mt-3" onClick={() => setCurrentView('explore')}>Browse Campaigns</Button>
+    73→          </div>
+    74→        </TabsContent>
+    75→      </Tabs>
+    76→    </div>
+    77→  );
+    78→}
+    79→
+    80→// ─────────────────────────────────────────────────────────────
+    81→// FundraiserDashboard (unchanged)
+    82→// ─────────────────────────────────────────────────────────────
+    83→
+    84→export function FundraiserDashboard() {
+    85→  const { setCurrentView } = useAppStore();
+    86→
+    87→  const myCampaigns = [
+    88→    { title: 'Help a Student Continue Her Education', raised: 32500, goal: 50000, donors: 87, status: 'Published', views: 2340 },
+    89→    { title: 'Community Food Distribution Project', raised: 234000, goal: 600000, donors: 178, status: 'Published', views: 3120 },
+    90→  ];
+    91→
+    92→  return (
+    93→    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+    94→      <button onClick={() => setCurrentView('home')} className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+    95→        <ArrowLeft className="h-4 w-4" /> Back to home
+    96→      </button>
+    97→      <div className="flex items-center justify-between">
+    98→        <div>
+    99→          <h1 className="text-2xl font-bold">Fundraiser Dashboard</h1>
+   100→          <p className="mt-1 text-muted-foreground">Manage your campaigns and track progress</p>
+   101→        </div>
+   102→        <Button onClick={() => useAppStore.setState({ currentView: 'create-campaign' })}>+ New Campaign</Button>
+   103→      </div>
+   104→
+   105→      {/* Stats */}
+   106→      <div className="mt-6 grid gap-4 sm:grid-cols-4">
+   107→        {[
+   108→          { icon: DollarSign, label: 'Total Raised', value: '₹2.67L', color: 'text-primary', bg: 'bg-primary/10' },
+   109→          { icon: Users, label: 'Total Donors', value: '265', color: 'text-[var(--gold)]', bg: 'bg-[var(--gold)]/10' },
+   110→          { icon: FileText, label: 'Active Campaigns', value: '2', color: 'text-emerald-600', bg: 'bg-emerald-100' },
+   111→          { icon: Clock, label: 'Pending Withdrawals', value: '1', color: 'text-amber-600', bg: 'bg-amber-100' },
+   112→        ].map((s) => (
+   113→          <Card key={s.label}><CardContent className="p-5"><div className="flex items-center gap-3"><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${s.bg}`}><s.icon className={`h-5 w-5 ${s.color}`} /></div><div><p className="text-2xl font-bold">{s.value}</p><p className="text-xs text-muted-foreground">{s.label}</p></div></div></CardContent></Card>
+   114→        ))}
+   115→      </div>
+   116→
+   117→      {/* Campaigns */}
+   118→      <div className="mt-8">
+   119→        <h2 className="text-lg font-semibold">My Campaigns</h2>
+   120→        <div className="mt-4 space-y-3">
+   121→          {myCampaigns.map((c) => (
+   122→            <Card key={c.title} className="overflow-hidden">
+   123→              <CardContent className="p-5">
+   124→                <div className="flex items-start justify-between gap-4">
+   125→                  <div className="min-w-0 flex-1">
+   126→                    <div className="flex items-center gap-2">
+   127→                      <h3 className="text-sm font-semibold truncate">{c.title}</h3>
+   128→                      <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">{c.status}</span>
+   129→                    </div>
+   130→                    <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
+   131→                      <span>{c.donors} donors</span>
+   132→                      <span>{c.views} views</span>
+   133→                    </div>
+   134→                    <div className="mt-2">
+   135→                      <div className="flex items-baseline gap-2">
+   136→                        <span className="text-lg font-bold">{formatCurrency(c.raised)}</span>
+   137→                        <span className="text-xs text-muted-foreground">of {formatCurrency(c.goal)}</span>
+   138→                      </div>
+   139→                      <Progress value={Math.round((c.raised / c.goal) * 100)} className="mt-1 h-1.5 [&>div]:bg-primary" />
+   140→                    </div>
+   141→                  </div>
+   142→                </div>
+   143→              </CardContent>
+   144→            </Card>
+   145→          ))}
+   146→        </div>
+   147→      </div>
+   148→    </div>
+   149→  );
+   150→}
+   151→
+   152→// ─────────────────────────────────────────────────────────────
+   153→// AdminDashboard (fully rewritten)
+   154→// ─────────────────────────────────────────────────────────────
+   155→
+   156→const REVIEWER_ID = 'admin';
+   157→
+   158→interface SidebarItem {
+   159→  icon: React.ComponentType<{ className?: string }>;
+   160→  label: string;
+   161→  view: AdminSubView;
+   162→}
+   163→
+   164→const sidebarItems: SidebarItem[] = [
+   165→  { icon: LayoutDashboard, label: 'Overview', view: 'overview' },
+   166→  { icon: FileText, label: 'Campaigns', view: 'campaigns' },
+   167→  { icon: ClipboardList, label: 'Review Queue', view: 'review-queue' },
+   168→  { icon: CreditCard, label: 'Donations', view: 'donations' },
+   169→  { icon: Wallet, label: 'Withdrawals', view: 'withdrawals' },
+   170→  { icon: Users, label: 'Users', view: 'users' },
+   171→  { icon: Globe, label: 'Organizations', view: 'organizations' },
+   172→  { icon: Tag, label: 'Categories', view: 'categories' },
+   173→  { icon: UserCheck, label: 'Verification', view: 'verification' },
+   174→  { icon: Flag, label: 'Reports', view: 'reports' },
+   175→  { icon: Scale, label: 'Compliance', view: 'compliance' },
+   176→  { icon: Sparkles, label: 'Featured', view: 'featured' },
+   177→  { icon: TrendingUp, label: 'Analytics', view: 'analytics' },
+   178→  { icon: Lock, label: 'Payment Settings', view: 'payment-settings' },
+   179→  { icon: Settings, label: 'Platform Settings', view: 'platform-settings' },
+   180→  { icon: Bell, label: 'Audit Logs', view: 'audit-logs' },
+   181→  { icon: HandHeart, label: 'GraceFund Giving', view: 'give-contributions' },
+   182→];
+   183→
+   184→const giveSidebarItems: SidebarItem[] = [
+   185→  { icon: Users, label: 'Contributions', view: 'give-contributions' },
+   186→  { icon: PieChart, label: 'Allocations', view: 'give-allocations' },
+   187→  { icon: BarChart3, label: 'Fund Balances', view: 'give-balances' },
+   188→  { icon: Eye, label: 'Transparency', view: 'give-transparency' },
+   189→  { icon: TrendingUp, label: 'Reports', view: 'give-reports' },
+   190→];
+   191→
+   192→interface Stats {
+   193→  totalRaised: number;
+   194→  peopleHelped: number;
+   195→  activeCampaigns: number;
+   196→  countriesReached: number;
+   197→  pendingVerifications: number;
+   198→  underReviewCampaigns: number;
+   199→  highRiskCampaigns: number;
+   200→  openReports: number;
+   201→  pendingWithdrawals: number;
+   202→  suspendedUsers: number;
+   203→}
+   204→
+   205→function StatCardSkeleton() {
+   206→  return (
+   207→    <Card>
+   208→      <CardContent className="p-5">
+   209→        <div className="flex items-center justify-between">
+   210→          <Skeleton className="h-3 w-20" />
+   211→          <Skeleton className="h-4 w-4 rounded" />
+   212→        </div>
+   213→        <Skeleton className="mt-3 h-7 w-16" />
+   214→        <Skeleton className="mt-2 h-3 w-28" />
+   215→      </CardContent>
+   216→    </Card>
+   217→  );
+   218→}
+   219→
+   220→function EmptyState({ icon: Icon, title, description }: { icon: React.ComponentType<{ className?: string }>; title: string; description: string }) {
+   221→  return (
+   222→    <div className="rounded-xl border bg-muted/20 p-8 text-center">
+   223→      <Icon className="mx-auto h-10 w-10 text-muted-foreground/30" />
+   224→      <p className="mt-3 text-sm font-medium">{title}</p>
+   225→      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+   226→    </div>
+   227→  );
+   228→}
+   229→
+   230→function ListSkeleton({ rows = 4 }: { rows?: number }) {
+   231→  return (
+   232→    <Card className="overflow-hidden">
+   233→      <CardContent className="p-0">
+   234→        <div className="divide-y">
+   235→          {Array.from({ length: rows }).map((_, i) => (
+   236→            <div key={i} className="flex items-center gap-4 p-4">
+   237→              <Skeleton className="h-4 w-4 rounded" />
+   238→              <div className="flex-1 space-y-1.5">
+   239→                <Skeleton className="h-4 w-3/4" />
+   240→                <Skeleton className="h-3 w-1/2" />
+   241→              </div>
+   242→              <Skeleton className="h-7 w-20 rounded-md" />
+   243→            </div>
+   244→          ))}
+   245→        </div>
+   246→      </CardContent>
+   247→    </Card>
+   248→  );
+   249→}
+   250→
+   251→function PlaceholderView({ title, icon: Icon }: { title: string; icon: React.ComponentType<{ className?: string }> }) {
+   252→  return (
+   253→    <EmptyState icon={Icon} title={title} description="This section is under development. Check back soon." />
+   254→  );
+   255→}
+   256→
+   257→// ── Overview ──────────────────────────────────────────────────
+   258→
+   259→function OverviewView() {
+   260→  const [stats, setStats] = useState<Stats | null>(null);
+   261→  const [loading, setLoading] = useState(true);
+   262→
+   263→  useEffect(() => {
+   264→    const ac = new AbortController();
+   265→    fetch('/api/stats', { signal: ac.signal })
+   266→      .then((r) => (r.ok ? r.json() : null))
+   267→      .then((data) => { if (data) setStats(data); })
+   268→      .catch(() => {})
+   269→      .finally(() => setLoading(false));
+   270→    return () => ac.abort();
+   271→  }, []);
+   272→
+   273→  const cards = [
+   274→    { icon: DollarSign, label: 'Total Raised', value: stats ? formatCompactCurrency(stats.totalRaised) : '—', sub: 'Across all campaigns', color: 'text-primary', bg: 'bg-primary/10' },
+   275→    { icon: FileText, label: 'Active Campaigns', value: stats ? formatNumber(stats.activeCampaigns) : '—', sub: `${stats ? stats.underReviewCampaigns : '—'} under review`, color: 'text-emerald-600', bg: 'bg-emerald-100' },
+   276→    { icon: Users, label: 'People Helped', value: stats ? formatNumber(stats.peopleHelped) : '—', sub: 'Total unique donors', color: 'text-[var(--gold)]', bg: 'bg-[var(--gold)]/10' },
+   277→    { icon: Globe, label: 'Countries Reached', value: stats ? formatNumber(stats.countriesReached) : '—', sub: 'Active regions', color: 'text-sky-600', bg: 'bg-sky-100' },
+   278→    { icon: AlertCircle, label: 'Open Reports', value: stats ? formatNumber(stats.openReports) : '—', sub: 'Needs attention', color: 'text-amber-600', bg: 'bg-amber-100' },
+   279→    { icon: Wallet, label: 'Pending Withdrawals', value: stats ? formatNumber(stats.pendingWithdrawals) : '—', sub: 'Awaiting processing', color: 'text-violet-600', bg: 'bg-violet-100' },
+   280→  ];
+   281→
+   282→  return (
+   283→    <div className="space-y-8">
+   284→      <div>
+   285→        <h2 className="text-lg font-semibold">Platform Overview</h2>
+   286→        <p className="text-sm text-muted-foreground">Key metrics and pending items at a glance</p>
+   287→      </div>
+   288→
+   289→      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+   290→        {loading
+   291→          ? Array.from({ length: 6 }).map((_, i) => <StatCardSkeleton key={i} />)
+   292→          : cards.map((s) => (
+   293→              <Card key={s.label}>
+   294→                <CardContent className="p-5">
+   295→                  <div className="flex items-center justify-between">
+   296→                    <p className="text-xs text-muted-foreground">{s.label}</p>
+   297→                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${s.bg}`}>
+   298→                      <s.icon className={`h-4 w-4 ${s.color}`} />
+   299→                    </div>
+   300→                  </div>
+   301→                  <p className="mt-2 text-2xl font-bold">{s.value}</p>
+   302→                  <p className="mt-1 text-xs text-muted-foreground">{s.sub}</p>
+   303→                </CardContent>
+   304→              </Card>
+   305→            ))}
+   306→      </div>
+   307→
+   308→      {/* Quick-action highlights */}
+   309→      <div className="grid gap-4 sm:grid-cols-3">
+   310→        {stats && (
+   311→          <>
+   312→            {stats.highRiskCampaigns > 0 && (
+   313→              <Card className="border-red-200 bg-red-50/50 dark:border-red-900/40 dark:bg-red-950/20">
+   314→                <CardContent className="p-4 flex items-center gap-3">
+   315→                  <AlertTriangle className="h-5 w-5 text-red-500 shrink-0" />
+   316→                  <div className="min-w-0">
+   317→                    <p className="text-sm font-medium text-red-700 dark:text-red-400">{stats.highRiskCampaigns} High Risk Campaigns</p>
+   318→                    <p className="text-xs text-red-500/70">Review immediately</p>
+   319→                  </div>
+   320→                  <ChevronRight className="h-4 w-4 text-red-400 shrink-0" />
+   321→                </CardContent>
+   322→              </Card>
+   323→            )}
+   324→            {stats.pendingVerifications > 0 && (
+   325→              <Card className="border-amber-200 bg-amber-50/50 dark:border-amber-900/40 dark:bg-amber-950/20">
+   326→                <CardContent className="p-4 flex items-center gap-3">
+   327→                  <UserCheck className="h-5 w-5 text-amber-500 shrink-0" />
+   328→                  <div className="min-w-0">
+   329→                    <p className="text-sm font-medium text-amber-700 dark:text-amber-400">{stats.pendingVerifications} Pending Verifications</p>
+   330→                    <p className="text-xs text-amber-500/70">Identity checks awaiting review</p>
+   331→                  </div>
+   332→                  <ChevronRight className="h-4 w-4 text-amber-400 shrink-0" />
+   333→                </CardContent>
+   334→              </Card>
+   335→            )}
+   336→            {stats.suspendedUsers > 0 && (
+   337→              <Card className="border-orange-200 bg-orange-50/50 dark:border-orange-900/40 dark:bg-orange-950/20">
+   338→                <CardContent className="p-4 flex items-center gap-3">
+   339→                  <Ban className="h-5 w-5 text-orange-500 shrink-0" />
+   340→                  <div className="min-w-0">
+   341→                    <p className="text-sm font-medium text-orange-700 dark:text-orange-400">{stats.suspendedUsers} Suspended Users</p>
+   342→                    <p className="text-xs text-orange-500/70">Accounts currently restricted</p>
+   343→                  </div>
+   344→                  <ChevronRight className="h-4 w-4 text-orange-400 shrink-0" />
+   345→                </CardContent>
+   346→              </Card>
+   347→            )}
+   348→          </>
+   349→        )}
+   350→      </div>
+   351→    </div>
+   352→  );
+   353→}
+   354→
+   355→// ── Review Queue ─────────────────────────────────────────────
+   356→
+   357→interface ReviewCampaign {
+   358→  id: string;
+   359→  title: string;
+   360→  slug: string;
+   361→  goalAmount: number;
+   362→  raisedAmount: number;
+   363→  status: string;
+   364→  submittedAt: string;
+   365→  organizer: { id: string; name: string | null; avatarUrl: string | null; verificationLevel: string } | null;
+   366→  category: { id: string; name: string; slug: string } | null;
+   367→  _count: { donations: number; reports: number };
+   368→}
+   369→
+   370→function ReviewQueueView() {
+   371→  const [campaigns, setCampaigns] = useState<ReviewCampaign[]>([]);
+   372→  const [loading, setLoading] = useState(true);
+   373→  const [actionLoading, setActionLoading] = useState<string | null>(null);
+   374→
+   375→  const fetchCampaigns = useCallback(() => {
+   376→    const ac = new AbortController();
+   377→    setLoading(true);
+   378→    fetch('/api/reviews', { signal: ac.signal })
+   379→      .then((r) => (r.ok ? r.json() : []))
+   380→      .then((data) => setCampaigns(Array.isArray(data) ? data : []))
+   381→      .catch(() => {})
+   382→      .finally(() => setLoading(false));
+   383→    return () => ac.abort();
+   384→  }, []);
+   385→
+   386→  useEffect(() => { fetchCampaigns(); }, [fetchCampaigns]);
+   387→
+   388→  const handleAction = async (id: string, action: string) => {
+   389→    setActionLoading(id);
+   390→    try {
+   391→      await fetch(`/api/reviews/${id}`, {
+   392→        method: 'PUT',
+   393→        headers: { 'Content-Type': 'application/json' },
+   394→        body: JSON.stringify({ action }),
+   395→      });
+   396→      fetchCampaigns();
+   397→    } catch {
+   398→      /* noop */
+   399→    } finally {
+   400→      setActionLoading(null);
+   401→    }
+   402→  };
+   403→
+   404→  const statusBadge = (status: string) => {
+   405→    const map: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }> = {
+   406→      submitted: { variant: 'outline', label: 'Submitted' },
+   407→      under_review: { variant: 'secondary', label: 'Under Review' },
+   408→    };
+   409→    const m = map[status] || { variant: 'outline' as const, label: status };
+   410→    return <Badge variant={m.variant}>{m.label}</Badge>;
+   411→  };
+   412→
+   413→  return (
+   414→    <div className="space-y-6">
+   415→      <div className="flex items-center justify-between">
+   416→        <div>
+   417→          <h2 className="text-lg font-semibold">Campaign Review Queue</h2>
+   418→          <p className="text-sm text-muted-foreground">Campaigns awaiting admin review</p>
+   419→        </div>
+   420→        <Button variant="outline" size="sm" onClick={() => fetchCampaigns()} disabled={loading}>
+   421→          <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+   422→          Refresh
+   423→        </Button>
+   424→      </div>
+   425→
+   426→      {loading ? (
+   427→        <ListSkeleton rows={3} />
+   428→      ) : campaigns.length === 0 ? (
+   429→        <EmptyState icon={ClipboardList} title="No campaigns to review" description="All campaigns have been reviewed. Check back later." />
+   430→      ) : (
+   431→        <div className="space-y-3">
+   432→          {campaigns.map((c) => (
+   433→            <Card key={c.id} className="overflow-hidden">
+   434→              <CardContent className="p-4 sm:p-5">
+   435→                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+   436→                  <div className="min-w-0 flex-1">
+   437→                    <div className="flex flex-wrap items-center gap-2">
+   438→                      <h3 className="text-sm font-semibold">{c.title}</h3>
+   439→                      {statusBadge(c.status)}
+   440→                    </div>
+   441→                    <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+   442→                      {c.organizer && <span>by {c.organizer.name || 'Unknown'}</span>}
+   443→                      {c.category && <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{c.category.name}</span>}
+   444→                      <span>{formatCurrency(c.goalAmount)} goal</span>
+   445→                      {c.submittedAt && <span>{new Date(c.submittedAt).toLocaleDateString()}</span>}
+   446→                    </div>
+   447→                    {c._count.reports > 0 && (
+   448→                      <p className="mt-2 text-xs text-red-500 flex items-center gap-1">
+   449→                        <Flag className="h-3 w-3" /> {c._count.reports} report{c._count.reports > 1 ? 's' : ''} filed
+   450→                      </p>
+   451→                    )}
+   452→                  </div>
+   453→                  <div className="flex items-center gap-2 shrink-0">
+   454→                    <Button
+   455→                      size="sm"
+   456→                      variant="outline"
+   457→                      className="h-8 text-xs"
+   458→                      disabled={actionLoading === c.id}
+   459→                      onClick={() => handleAction(c.id, 'request_info')}
+   460→                    >
+   461→                      {actionLoading === c.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Info className="mr-1 h-3 w-3" />}
+   462→                      Request Info
+   463→                    </Button>
+   464→                    <Button
+   465→                      size="sm"
+   466→                      variant="outline"
+   467→                      className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+   468→                      disabled={actionLoading === c.id}
+   469→                      onClick={() => handleAction(c.id, 'reject')}
+   470→                    >
+   471→                      <XCircle className="mr-1 h-3 w-3" />
+   472→                      Reject
+   473→                    </Button>
+   474→                    <Button
+   475→                      size="sm"
+   476→                      className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700"
+   477→                      disabled={actionLoading === c.id}
+   478→                      onClick={() => handleAction(c.id, 'approve')}
+   479→                    >
+   480→                      {actionLoading === c.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle className="mr-1 h-3 w-3" />}
+   481→                      Approve
+   482→                    </Button>
+   483→                  </div>
+   484→                </div>
+   485→              </CardContent>
+   486→            </Card>
+   487→          ))}
+   488→        </div>
+   489→      )}
+   490→    </div>
+   491→  );
+   492→}
+   493→
+   494→// ── Reports ───────────────────────────────────────────────────
+   495→
+   496→interface ReportItem {
+   497→  id: string;
+   498→  reason: string;
+   499→  description: string | null;
+   500→  status: string;
+   501→  riskLevel: string;
+   502→  adminNotes: string | null;
+   503→  createdAt: string;
+   504→  campaign: { id: string; title: string } | null;
+   505→  reporter: { id: string; name: string; email: string } | null;
+   506→  reviewer: { id: string; name: string } | null;
+   507→}
+   508→
+   509→const reportStatusOptions = ['all', 'new', 'under_review', 'escalated', 'resolved', 'dismissed'];
+   510→
+   511→function ReportsView() {
+   512→  const [reports, setReports] = useState<ReportItem[]>([]);
+   513→  const [loading, setLoading] = useState(true);
+   514→  const [filter, setFilter] = useState('all');
+   515→  const [updatingId, setUpdatingId] = useState<string | null>(null);
+   516→
+   517→  const fetchReports = useCallback((status?: string) => {
+   518→    const ac = new AbortController();
+   519→    setLoading(true);
+   520→    const url = status && status !== 'all' ? `/api/reports?status=${status}` : '/api/reports';
+   521→    fetch(url, { signal: ac.signal })
+   522→      .then((r) => (r.ok ? r.json() : []))
+   523→      .then((data) => setReports(Array.isArray(data) ? data : []))
+   524→      .catch(() => {})
+   525→      .finally(() => setLoading(false));
+   526→    return () => ac.abort();
+   527→  }, []);
+   528→
+   529→  useEffect(() => { fetchReports(filter); }, [fetchReports, filter]);
+   530→
+   531→  const handleStatus = async (id: string, status: string, adminNotes = '') => {
+   532→    setUpdatingId(id);
+   533→    try {
+   534→      await fetch(`/api/reports/${id}`, {
+   535→        method: 'PUT',
+   536→        headers: { 'Content-Type': 'application/json' },
+   537→        body: JSON.stringify({ status, adminNotes }),
+   538→      });
+   539→      fetchReports(filter);
+   540→    } catch {
+   541→      /* noop */
+   542→    } finally {
+   543→      setUpdatingId(null);
+   544→    }
+   545→  };
+   546→
+   547→  const riskBadge = (level: string) => {
+   548→    const m: Record<string, { className: string; label: string }> = {
+   549→      low: { className: 'bg-emerald-100 text-emerald-700', label: 'Low' },
+   550→      medium: { className: 'bg-amber-100 text-amber-700', label: 'Medium' },
+   551→      high: { className: 'bg-red-100 text-red-700', label: 'High' },
+   552→    };
+   553→    const v = m[level] || m.medium;
+   554→    return <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${v.className}`}>{v.label}</span>;
+   555→  };
+   556→
+   557→  const statusBadge = (status: string) => {
+   558→    const m: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }> = {
+   559→      new: { variant: 'destructive', label: 'New' },
+   560→      under_review: { variant: 'secondary', label: 'Under Review' },
+   561→      escalated: { variant: 'destructive', label: 'Escalated' },
+   562→      resolved: { variant: 'default', label: 'Resolved' },
+   563→      dismissed: { variant: 'outline', label: 'Dismissed' },
+   564→    };
+   565→    const v = m[status] || { variant: 'outline' as const, label: status };
+   566→    return <Badge variant={v.variant}>{v.label}</Badge>;
+   567→  };
+   568→
+   569→  return (
+   570→    <div className="space-y-6">
+   571→      <div>
+   572→        <h2 className="text-lg font-semibold">Reports</h2>
+   573→        <p className="text-sm text-muted-foreground">User-submitted campaign reports</p>
+   574→      </div>
+   575→
+   576→      <div className="flex flex-wrap gap-2">
+   577→        {reportStatusOptions.map((s) => (
+   578→          <Button
+   579→            key={s}
+   580→            size="sm"
+   581→            variant={filter === s ? 'default' : 'outline'}
+   582→            className="h-8 text-xs capitalize"
+   583→            onClick={() => setFilter(s)}
+   584→          >
+   585→            {s.replace('_', ' ')}
+   586→          </Button>
+   587→        ))}
+   588→      </div>
+   589→
+   590→      {loading ? (
+   591→        <ListSkeleton rows={3} />
+   592→      ) : reports.length === 0 ? (
+   593→        <EmptyState icon={Flag} title="No reports found" description={filter === 'all' ? 'No reports have been filed yet.' : `No reports with status "${filter.replace('_', ' ')}".`} />
+   594→      ) : (
+   595→        <ScrollArea className="max-h-[600px]">
+   596→          <div className="space-y-3 pr-4">
+   597→            {reports.map((r) => (
+   598→              <Card key={r.id} className="overflow-hidden">
+   599→                <CardContent className="p-4 sm:p-5">
+   600→                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+   601→                    <div className="min-w-0 flex-1 space-y-2">
+   602→                      <div className="flex flex-wrap items-center gap-2">
+   603→                        <h3 className="text-sm font-semibold">{r.campaign?.title || 'Unknown Campaign'}</h3>
+   604→                        {statusBadge(r.status)}
+   605→                        {riskBadge(r.riskLevel)}
+   606→                      </div>
+   607→                      <p className="text-sm text-muted-foreground capitalize">{r.reason.replace(/_/g, ' ')}</p>
+   608→                      {r.description && <p className="text-xs text-muted-foreground mt-1">{r.description}</p>}
+   609→                      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+   610→                        <span>by {r.reporter?.name || 'Unknown'}</span>
+   611→                        <span>{new Date(r.createdAt).toLocaleDateString()}</span>
+   612→                      </div>
+   613→                      {r.adminNotes && (
+   614→                        <div className="rounded-md bg-muted/50 p-2 mt-1">
+   615→                          <p className="text-xs text-muted-foreground">Admin notes: {r.adminNotes}</p>
+   616→                        </div>
+   617→                      )}
+   618→                    </div>
+   619→                    {r.status === 'new' || r.status === 'under_review' || r.status === 'escalated' ? (
+   620→                      <div className="flex flex-col gap-2 shrink-0">
+   621→                        <Button
+   622→                          size="sm"
+   623→                          variant="outline"
+   624→                          className="h-8 text-xs"
+   625→                          disabled={updatingId === r.id}
+   626→                          onClick={() => handleStatus(r.id, 'dismissed', 'Reviewed — no action needed')}
+   627→                        >
+   628→                          {updatingId === r.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Dismiss'}
+   629→                        </Button>
+   630→                        <Button
+   631→                          size="sm"
+   632→                          className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700"
+   633→                          disabled={updatingId === r.id}
+   634→                          onClick={() => handleStatus(r.id, 'resolved', 'Resolved by admin')}
+   635→                        >
+   636→                          {updatingId === r.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Resolve'}
+   637→                        </Button>
+   638→                      </div>
+   639→                    ) : null}
+   640→                  </div>
+   641→                </CardContent>
+   642→              </Card>
+   643→            ))}
+   644→          </div>
+   645→        </ScrollArea>
+   646→      )}
+   647→    </div>
+   648→  );
+   649→}
+   650→
+   651→// ── Compliance ────────────────────────────────────────────────
+   652→
+   653→interface RiskEvent {
+   654→  id: string;
+   655→  eventType: string;
+   656→  severity: string;
+   657→  description: string;
+   658→  createdAt: string;
+   659→  resolvedAt: string | null;
+   660→  user: { id: string; name: string; email: string } | null;
+   661→  campaign: { id: string; title: string; slug: string } | null;
+   662→  resolver: { id: string; name: string } | null;
+   663→}
+   664→
+   665→function ComplianceView() {
+   666→  const [stats, setStats] = useState<Stats | null>(null);
+   667→  const [riskEvents, setRiskEvents] = useState<RiskEvent[]>([]);
+   668→  const [loadingStats, setLoadingStats] = useState(true);
+   669→  const [loadingRisks, setLoadingRisks] = useState(true);
+   670→
+   671→  useEffect(() => {
+   672→    const ac = new AbortController();
+   673→    fetch('/api/stats', { signal: ac.signal })
+   674→      .then((r) => (r.ok ? r.json() : null))
+   675→      .then((data) => { if (data) setStats(data); })
+   676→      .catch(() => {})
+   677→      .finally(() => setLoadingStats(false));
+   678→    return () => ac.abort();
+   679→  }, []);
+   680→
+   681→  useEffect(() => {
+   682→    const ac = new AbortController();
+   683→    fetch('/api/risk-events?resolved=false', { signal: ac.signal })
+   684→      .then((r) => (r.ok ? r.json() : []))
+   685→      .then((data) => setRiskEvents(Array.isArray(data) ? data : []))
+   686→      .catch(() => {})
+   687→      .finally(() => setLoadingRisks(false));
+   688→    return () => ac.abort();
+   689→  }, []);
+   690→
+   691→  const severityBadge = (s: string) => {
+   692→    const m: Record<string, { className: string; label: string }> = {
+   693→      low: { className: 'bg-emerald-100 text-emerald-700', label: 'Low' },
+   694→      medium: { className: 'bg-amber-100 text-amber-700', label: 'Medium' },
+   695→      high: { className: 'bg-red-100 text-red-700', label: 'High' },
+   696→    };
+   697→    const v = m[s] || m.medium;
+   698→    return <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${v.className}`}>{v.label}</span>;
+   699→  };
+   700→
+   701→  return (
+   702→    <div className="space-y-8">
+   703→      <div>
+   704→        <h2 className="text-lg font-semibold">Compliance & Risk</h2>
+   705→        <p className="text-sm text-muted-foreground">Monitor platform integrity and risk indicators</p>
+   706→      </div>
+   707→
+   708→      {/* Compliance stats */}
+   709→      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+   710→        {loadingStats
+   711→          ? Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
+   712→          : (
+   713→              <>
+   714→                <Card>
+   715→                  <CardContent className="p-5">
+   716→                    <div className="flex items-center justify-between">
+   717→                      <p className="text-xs text-muted-foreground">High Risk Campaigns</p>
+   718→                      <AlertTriangle className="h-4 w-4 text-red-500" />
+   719→                    </div>
+   720→                    <p className="mt-2 text-2xl font-bold text-red-600">{stats?.highRiskCampaigns ?? '—'}</p>
+   721→                  </CardContent>
+   722→                </Card>
+   723→                <Card>
+   724→                  <CardContent className="p-5">
+   725→                    <div className="flex items-center justify-between">
+   726→                      <p className="text-xs text-muted-foreground">Open Reports</p>
+   727→                      <Flag className="h-4 w-4 text-amber-500" />
+   728→                    </div>
+   729→                    <p className="mt-2 text-2xl font-bold text-amber-600">{stats?.openReports ?? '—'}</p>
+   730→                  </CardContent>
+   731→                </Card>
+   732→                <Card>
+   733→                  <CardContent className="p-5">
+   734→                    <div className="flex items-center justify-between">
+   735→                      <p className="text-xs text-muted-foreground">Suspended Users</p>
+   736→                      <Ban className="h-4 w-4 text-orange-500" />
+   737→                    </div>
+   738→                    <p className="mt-2 text-2xl font-bold text-orange-600">{stats?.suspendedUsers ?? '—'}</p>
+   739→                  </CardContent>
+   740→                </Card>
+   741→                <Card>
+   742→                  <CardContent className="p-5">
+   743→                    <div className="flex items-center justify-between">
+   744→                      <p className="text-xs text-muted-foreground">Pending Verifications</p>
+   745→                      <UserCheck className="h-4 w-4 text-sky-500" />
+   746→                    </div>
+   747→                    <p className="mt-2 text-2xl font-bold">{stats?.pendingVerifications ?? '—'}</p>
+   748→                  </CardContent>
+   749→                </Card>
+   750→              </>
+   751→            )}
+   752→      </div>
+   753→
+   754→      {/* Unresolved risk events */}
+   755→      <div>
+   756→        <h3 className="text-sm font-semibold mb-3">Unresolved Risk Events</h3>
+   757→        {loadingRisks ? (
+   758→          <ListSkeleton rows={3} />
+   759→        ) : riskEvents.length === 0 ? (
+   760→          <EmptyState icon={Shield} title="No unresolved risk events" description="All clear! No active risk events detected." />
+   761→        ) : (
+   762→          <ScrollArea className="max-h-96">
+   763→            <div className="space-y-2 pr-4">
+   764→              {riskEvents.map((re) => (
+   765→                <Card key={re.id} className="overflow-hidden">
+   766→                  <CardContent className="p-4 flex items-start gap-3">
+   767→                    <AlertTriangle className={`h-4 w-4 mt-0.5 shrink-0 ${re.severity === 'high' ? 'text-red-500' : re.severity === 'medium' ? 'text-amber-500' : 'text-emerald-500'}`} />
+   768→                    <div className="min-w-0 flex-1">
+   769→                      <div className="flex flex-wrap items-center gap-2">
+   770→                        <span className="text-sm font-medium capitalize">{re.eventType.replace(/_/g, ' ')}</span>
+   771→                        {severityBadge(re.severity)}
+   772→                      </div>
+   773→                      <p className="text-xs text-muted-foreground mt-0.5">{re.description}</p>
+   774→                      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-1">
+   775→                        {re.user && <span>User: {re.user.name}</span>}
+   776→                        {re.campaign && <span>Campaign: {re.campaign.title}</span>}
+   777→                        <span>{new Date(re.createdAt).toLocaleDateString()}</span>
+   778→                      </div>
+   779→                    </div>
+   780→                  </CardContent>
+   781→                </Card>
+   782→              ))}
+   783→            </div>
+   784→          </ScrollArea>
+   785→        )}
+   786→      </div>
+   787→    </div>
+   788→  );
+   789→}
+   790→
+   791→// ── Verification ──────────────────────────────────────────────
+   792→
+   793→interface VerificationItem {
+   794→  id: string;
+   795→  userId: string;
+   796→  level: string;
+   797→  status: string;
+   798→  submittedAt: string | null;
+   799→  reviewedAt: string | null;
+   800→  rejectionReason: string | null;
+   801→  createdAt: string;
+   802→  user: { id: string; name: string; email: string } | null;
+   803→  reviewer: { id: string; name: string } | null;
+   804→}
+   805→
+   806→function VerificationView() {
+   807→  const [verifications, setVerifications] = useState<VerificationItem[]>([]);
+   808→  const [loading, setLoading] = useState(true);
+   809→  const [actionLoading, setActionLoading] = useState<string | null>(null);
+   810→
+   811→  const fetchVerifications = useCallback(() => {
+   812→    const ac = new AbortController();
+   813→    setLoading(true);
+   814→    fetch('/api/verifications', { signal: ac.signal })
+   815→      .then((r) => (r.ok ? r.json() : []))
+   816→      .then((data) => setVerifications(Array.isArray(data) ? data : []))
+   817→      .catch(() => {})
+   818→      .finally(() => setLoading(false));
+   819→    return () => ac.abort();
+   820→  }, []);
+   821→
+   822→  useEffect(() => { fetchVerifications(); }, [fetchVerifications]);
+   823→
+   824→  const handleAction = async (id: string, status: string) => {
+   825→    setActionLoading(id);
+   826→    try {
+   827→      await fetch(`/api/verifications/${id}`, {
+   828→        method: 'PUT',
+   829→        headers: { 'Content-Type': 'application/json' },
+   830→        body: JSON.stringify({ status }),
+   831→      });
+   832→      fetchVerifications();
+   833→    } catch {
+   834→      /* noop */
+   835→    } finally {
+   836→      setActionLoading(null);
+   837→    }
+   838→  };
+   839→
+   840→  const statusBadge = (status: string) => {
+   841→    const m: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }> = {
+   842→      pending: { variant: 'secondary', label: 'Pending' },
+   843→      documents_submitted: { variant: 'outline', label: 'Docs Submitted' },
+   844→      under_review: { variant: 'secondary', label: 'Under Review' },
+   845→      verified: { variant: 'default', label: 'Verified' },
+   846→      rejected: { variant: 'destructive', label: 'Rejected' },
+   847→      expired: { variant: 'outline', label: 'Expired' },
+   848→      suspended: { variant: 'destructive', label: 'Suspended' },
+   849→      not_started: { variant: 'outline', label: 'Not Started' },
+   850→    };
+   851→    const v = m[status] || { variant: 'outline' as const, label: status };
+   852→    return <Badge variant={v.variant}>{v.label}</Badge>;
+   853→  };
+   854→
+   855→  return (
+   856→    <div className="space-y-6">
+   857→      <div className="flex items-center justify-between">
+   858→        <div>
+   859→          <h2 className="text-lg font-semibold">Verification Requests</h2>
+   860→          <p className="text-sm text-muted-foreground">Review identity and organization verification requests</p>
+   861→        </div>
+   862→        <Button variant="outline" size="sm" onClick={() => fetchVerifications()} disabled={loading}>
+   863→          <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+   864→          Refresh
+   865→        </Button>
+   866→      </div>
+   867→
+   868→      {loading ? (
+   869→        <ListSkeleton rows={4} />
+   870→      ) : verifications.length === 0 ? (
+   871→        <EmptyState icon={UserCheck} title="No verification requests" description="No pending or in-progress verifications." />
+   872→      ) : (
+   873→        <ScrollArea className="max-h-96">
+   874→          <div className="space-y-3 pr-4">
+   875→            {verifications.map((v) => (
+   876→              <Card key={v.id} className="overflow-hidden">
+   877→                <CardContent className="p-4 sm:p-5">
+   878→                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+   879→                    <div className="min-w-0 flex-1 space-y-1.5">
+   880→                      <div className="flex flex-wrap items-center gap-2">
+   881→                        <h3 className="text-sm font-semibold">{v.user?.name || 'Unknown User'}</h3>
+   882→                        {statusBadge(v.status)}
+   883→                        <Badge variant="outline" className="capitalize">{v.level}</Badge>
+   884→                      </div>
+   885→                      <p className="text-xs text-muted-foreground">{v.user?.email}</p>
+   886→                      {v.submittedAt && (
+   887→                        <p className="text-xs text-muted-foreground">Submitted {new Date(v.submittedAt).toLocaleDateString()}</p>
+   888→                      )}
+   889→                      {v.rejectionReason && (
+   890→                        <p className="text-xs text-red-500">Rejected: {v.rejectionReason}</p>
+   891→                      )}
+   892→                    </div>
+   893→                    {(v.status === 'pending' || v.status === 'documents_submitted' || v.status === 'under_review') && (
+   894→                      <div className="flex items-center gap-2 shrink-0">
+   895→                        <Button
+   896→                          size="sm"
+   897→                          variant="outline"
+   898→                          className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+   899→                          disabled={actionLoading === v.id}
+   900→                          onClick={() => handleAction(v.id, 'rejected')}
+   901→                        >
+   902→                          {actionLoading === v.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Reject'}
+   903→                        </Button>
+   904→                        <Button
+   905→                          size="sm"
+   906→                          className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700"
+   907→                          disabled={actionLoading === v.id}
+   908→                          onClick={() => handleAction(v.id, 'verified')}
+   909→                        >
+   910→                          {actionLoading === v.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Approve'}
+   911→                        </Button>
+   912→                      </div>
+   913→                    )}
+   914→                  </div>
+   915→                </CardContent>
+   916→              </Card>
+   917→            ))}
+   918→          </div>
+   919→        </ScrollArea>
+   920→      )}
+   921→    </div>
+   922→  );
+   923→}
+   924→
+   925→// ── Withdrawals ───────────────────────────────────────────────
+   926→
+   927→interface WithdrawalItem {
+   928→  id: string;
+   929→  amount: number;
+   930→  status: string;
+   931→  rejectionReason: string | null;
+   932→  reviewNotes: string | null;
+   933→  paymentReference: string | null;
+   934→  requestedAt: string;
+   935→  reviewedAt: string | null;
+   936→  paidAt: string | null;
+   937→  campaign: {
+   938→    id: string;
+   939→    title: string;
+   940→    slug: string;
+   941→    goalAmount: number;
+   942→    raisedAmount: number;
+   943→  } | null;
+   944→  requester: { id: string; name: string; email: string; avatarUrl: string | null } | null;
+   945→  reviewer: { id: string; name: string } | null;
+   946→}
+   947→
+   948→const withdrawalStatusOptions = ['all', 'requested', 'under_review', 'approved', 'processing', 'paid', 'rejected', 'suspended'];
+   949→
+   950→function WithdrawalsView() {
+   951→  const [withdrawals, setWithdrawals] = useState<WithdrawalItem[]>([]);
+   952→  const [loading, setLoading] = useState(true);
+   953→  const [filter, setFilter] = useState('all');
+   954→  const [updatingId, setUpdatingId] = useState<string | null>(null);
+   955→
+   956→  const fetchWithdrawals = useCallback((status?: string) => {
+   957→    const ac = new AbortController();
+   958→    setLoading(true);
+   959→    const url = status && status !== 'all' ? `/api/withdrawals?status=${status}` : '/api/withdrawals';
+   960→    fetch(url, { signal: ac.signal })
+   961→      .then((r) => (r.ok ? r.json() : []))
+   962→      .then((data) => setWithdrawals(Array.isArray(data) ? data : []))
+   963→      .catch(() => {})
+   964→      .finally(() => setLoading(false));
+   965→    return () => ac.abort();
+   966→  }, []);
+   967→
+   968→  useEffect(() => { fetchWithdrawals(filter); }, [fetchWithdrawals, filter]);
+   969→
+   970→  const handleAction = async (id: string, status: string) => {
+   971→    setUpdatingId(id);
+   972→    try {
+   973→      await fetch(`/api/withdrawals/${id}`, {
+   974→        method: 'PUT',
+   975→        headers: { 'Content-Type': 'application/json' },
+   976→        body: JSON.stringify({ status }),
+   977→      });
+   978→      fetchWithdrawals(filter);
+   979→    } catch {
+   980→      /* noop */
+   981→    } finally {
+   982→      setUpdatingId(null);
+   983→    }
+   984→  };
+   985→
+   986→  const statusBadge = (status: string) => {
+   987→    const m: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }> = {
+   988→      requested: { variant: 'secondary', label: 'Requested' },
+   989→      under_review: { variant: 'outline', label: 'Under Review' },
+   990→      documents_required: { variant: 'outline', label: 'Docs Required' },
+   991→      approved: { variant: 'default', label: 'Approved' },
+   992→      processing: { variant: 'secondary', label: 'Processing' },
+   993→      paid: { variant: 'default', label: 'Paid' },
+   994→      rejected: { variant: 'destructive', label: 'Rejected' },
+   995→      suspended: { variant: 'destructive', label: 'Suspended' },
+   996→    };
+   997→    const v = m[status] || { variant: 'outline' as const, label: status };
+   998→    return <Badge variant={v.variant}>{v.label}</Badge>;
+   999→  };
+  1000→
+  1001→  return (
+  1002→    <div className="space-y-6">
+  1003→      <div>
+  1004→        <h2 className="text-lg font-semibold">Withdrawal Requests</h2>
+  1005→        <p className="text-sm text-muted-foreground">Manage fund withdrawal requests from campaigns</p>
+  1006→      </div>
+  1007→
+  1008→      <div className="flex flex-wrap gap-2">
+  1009→        {withdrawalStatusOptions.map((s) => (
+  1010→          <Button
+  1011→            key={s}
+  1012→            size="sm"
+  1013→            variant={filter === s ? 'default' : 'outline'}
+  1014→            className="h-8 text-xs capitalize"
+  1015→            onClick={() => setFilter(s)}
+  1016→          >
+  1017→            {s.replace('_', ' ')}
+  1018→          </Button>
+  1019→        ))}
+  1020→      </div>
+  1021→
+  1022→      {loading ? (
+  1023→        <ListSkeleton rows={3} />
+  1024→      ) : withdrawals.length === 0 ? (
+  1025→        <EmptyState icon={Wallet} title="No withdrawal requests" description={filter === 'all' ? 'No withdrawal requests have been made yet.' : `No withdrawals with status "${filter.replace('_', ' ')}".`} />
+  1026→      ) : (
+  1027→        <ScrollArea className="max-h-96">
+  1028→          <div className="space-y-3 pr-4">
+  1029→            {withdrawals.map((w) => (
+  1030→              <Card key={w.id} className="overflow-hidden">
+  1031→                <CardContent className="p-4 sm:p-5">
+  1032→                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+  1033→                    <div className="min-w-0 flex-1 space-y-1.5">
+  1034→                      <div className="flex flex-wrap items-center gap-2">
+  1035→                        <h3 className="text-sm font-semibold">{w.campaign?.title || 'Unknown Campaign'}</h3>
+  1036→                        {statusBadge(w.status)}
+  1037→                      </div>
+  1038→                      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+  1039→                        <span className="font-medium text-foreground">{formatCurrency(w.amount)}</span>
+  1040→                        {w.requester && <span>by {w.requester.name}</span>}
+  1041→                        <span>Requested {new Date(w.requestedAt).toLocaleDateString()}</span>
+  1042→                      </div>
+  1043→                      {w.campaign && (
+  1044→                        <p className="text-xs text-muted-foreground">
+  1045→                          Campaign: {formatCurrency(w.campaign.raisedAmount)} raised of {formatCurrency(w.campaign.goalAmount)} goal
+  1046→                        </p>
+  1047→                      )}
+  1048→                      {w.rejectionReason && (
+  1049→                        <p className="text-xs text-red-500">Rejected: {w.rejectionReason}</p>
+  1050→                      )}
+  1051→                      {w.reviewNotes && (
+  1052→                        <p className="text-xs text-muted-foreground">Notes: {w.reviewNotes}</p>
+  1053→                      )}
+  1054→                    </div>
+  1055→                    {(w.status === 'requested' || w.status === 'under_review') && (
+  1056→                      <div className="flex flex-col gap-2 shrink-0">
+  1057→                        <Button
+  1058→                          size="sm"
+  1059→                          variant="outline"
+  1060→                          className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+  1061→                          disabled={updatingId === w.id}
+  1062→                          onClick={() => handleAction(w.id, 'rejected')}
+  1063→                        >
+  1064→                          {updatingId === w.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Reject'}
+  1065→                        </Button>
+  1066→                        <Button
+  1067→                          size="sm"
+  1068→                          className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700"
+  1069→                          disabled={updatingId === w.id}
+  1070→                          onClick={() => handleAction(w.id, 'approved')}
+  1071→                        >
+  1072→                          {updatingId === w.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Approve'}
+  1073→                        </Button>
+  1074→                      </div>
+  1075→                    )}
+  1076→                    {w.status === 'approved' && (
+  1077→                      <Button
+  1078→                        size="sm"
+  1079→                        className="h-8 text-xs bg-sky-600 hover:bg-sky-700"
+  1080→                        disabled={updatingId === w.id}
+  1081→                        onClick={() => handleAction(w.id, 'paid')}
+  1082→                      >
+  1083→                        {updatingId === w.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Mark Paid'}
+  1084→                      </Button>
+  1085→                    )}
+  1086→                  </div>
+  1087→                </CardContent>
+  1088→              </Card>
+  1089→            ))}
+  1090→          </div>
+  1091→        </ScrollArea>
+  1092→      )}
+  1093→    </div>
+  1094→  );
+  1095→}
+  1096→
+  1097→// ── Audit Logs ────────────────────────────────────────────────
+  1098→
+  1099→interface AuditLogItem {
+  1100→  id: string;
+  1101→  action: string;
+  1102→  entityType: string;
+  1103→  entityId: string | null;
+  1104→  previousValue: string | null;
+  1105→  newValue: string | null;
+  1106→  metadata: string | null;
+  1107→  createdAt: string;
+  1108→  admin: { id: string; name: string; email: string } | null;
+  1109→}
+  1110→
+  1111→function AuditLogsView() {
+  1112→  const [logs, setLogs] = useState<AuditLogItem[]>([]);
+  1113→  const [loading, setLoading] = useState(true);
+  1114→
+  1115→  useEffect(() => {
+  1116→    const ac = new AbortController();
+  1117→    fetch('/api/audit-logs?limit=100', { signal: ac.signal })
+  1118→      .then((r) => (r.ok ? r.json() : []))
+  1119→      .then((data) => setLogs(Array.isArray(data) ? data : []))
+  1120→      .catch(() => {})
+  1121→      .finally(() => setLoading(false));
+  1122→    return () => ac.abort();
+  1123→  }, []);
+  1124→
+  1125→  const actionIcon = (action: string) => {
+  1126→    if (action.includes('approve') || action.includes('verify') || action.includes('publish')) return <CheckCircle className="h-4 w-4 text-emerald-500" />;
+  1127→    if (action.includes('reject') || action.includes('ban') || action.includes('suspend')) return <XCircle className="h-4 w-4 text-red-500" />;
+  1128→    if (action.includes('update') || action.includes('edit')) return <Settings className="h-4 w-4 text-sky-500" />;
+  1129→    if (action.includes('create')) return <CircleDot className="h-4 w-4 text-violet-500" />;
+  1130→    if (action.includes('withdrawal')) return <Wallet className="h-4 w-4 text-amber-500" />;
+  1131→    return <Activity className="h-4 w-4 text-muted-foreground" />;
+  1132→  };
+  1133→
+  1134→  return (
+  1135→    <div className="space-y-6">
+  1136→      <div>
+  1137→        <h2 className="text-lg font-semibold">Audit Logs</h2>
+  1138→        <p className="text-sm text-muted-foreground">Track all administrative actions on the platform</p>
+  1139→      </div>
+  1140→
+  1141→      {loading ? (
+  1142→        <ListSkeleton rows={6} />
+  1143→      ) : logs.length === 0 ? (
+  1144→        <EmptyState icon={ClipboardList} title="No audit logs" description="No administrative actions have been recorded yet." />
+  1145→      ) : (
+  1146→        <Card className="overflow-hidden">
+  1147→          <ScrollArea className="max-h-[600px]">
+  1148→            <div className="divide-y">
+  1149→              {logs.map((log) => (
+  1150→                <div key={log.id} className="flex items-start gap-3 p-4 hover:bg-muted/30 transition-colors">
+  1151→                  <div className="mt-0.5 shrink-0">{actionIcon(log.action)}</div>
+  1152→                  <div className="min-w-0 flex-1">
+  1153→                    <p className="text-sm font-medium capitalize">{log.action.replace(/_/g, ' ')}</p>
+  1154→                    <p className="text-xs text-muted-foreground mt-0.5">
+  1155→                      <span className="capitalize">{log.entityType.replace(/_/g, ' ')}</span>
+  1156→                      {log.admin && <span> &middot; by {log.admin.name}</span>}
+  1157→                      {log.entityId && <span> &middot; ID: {log.entityId.slice(0, 8)}...</span>}
+  1158→                    </p>
+  1159→                    <p className="text-xs text-muted-foreground mt-0.5">
+  1160→                      {new Date(log.createdAt).toLocaleString()}
+  1161→                    </p>
+  1162→                  </div>
+  1163→                </div>
+  1164→              ))}
+  1165→            </div>
+  1166→          </ScrollArea>
+  1167→        </Card>
+  1168→      )}
+  1169→    </div>
+  1170→  );
+  1171→}
+  1172→
+  1173→// ── Sub-view router ───────────────────────────────────────────
+  1174→
+  1175→function AdminContent({ view }: { view: AdminSubView }) {
+  1176→  switch (view) {
+  1177→    case 'overview':
+  1178→      return <OverviewView />;
+  1179→    case 'review-queue':
+  1180→      return <ReviewQueueView />;
+  1181→    case 'reports':
+  1182→      return <ReportsView />;
+  1183→    case 'compliance':
+  1184→      return <ComplianceView />;
+  1185→    case 'verification':
+  1186→      return <VerificationView />;
+  1187→    case 'withdrawals':
+  1188→      return <WithdrawalsView />;
+  1189→    case 'audit-logs':
+  1190→      return <AuditLogsView />;
+  1191→    case 'give-contributions':
+  1192→      return <GiveContributionsView />;
+  1193→    case 'give-allocations':
+  1194→      return <GiveAllocationsView />;
+  1195→    case 'give-balances':
+  1196→      return <GiveBalancesView />;
+  1197→    case 'give-transparency':
+  1198→      return <GiveTransparencyView />;
+  1199→    case 'give-reports':
+  1200→      return <GiveReportsView />;
+  1201→    case 'campaigns':
+  1202→      return <PlaceholderView title="Campaigns Management" icon={FileText} />;
+  1203→    case 'donations':
+  1204→      return <PlaceholderView title="Donations Management" icon={CreditCard} />;
+  1205→    case 'users':
+  1206→      return <PlaceholderView title="Users Management" icon={Users} />;
+  1207→    case 'organizations':
+  1208→      return <PlaceholderView title="Organizations Management" icon={Globe} />;
+  1209→    case 'categories':
+  1210→      return <PlaceholderView title="Categories Management" icon={Tag} />;
+  1211→    case 'featured':
+  1212→      return <PlaceholderView title="Featured Campaigns" icon={Sparkles} />;
+  1213→    case 'analytics':
+  1214→      return <PlaceholderView title="Analytics" icon={TrendingUp} />;
+  1215→    case 'payment-settings':
+  1216→      return <PlaceholderView title="Payment Settings" icon={Lock} />;
+  1217→    case 'platform-settings':
+  1218→      return <PlaceholderView title="Platform Settings" icon={Settings} />;
+  1219→    default:
+  1220→      return null;
+  1221→  }
+  1222→}
+  1223→
+  1224→// ── Mobile bottom nav (visible < lg) ──────────────────────────
+  1225→
+  1226→function MobileNav({ current, onChange }: { current: AdminSubView; onChange: (v: AdminSubView) => void }) {
+  1227→  const mobileItems = sidebarItems.slice(0, 5); // Overview, Campaigns, Review Queue, Donations, Withdrawals
+  1228→
+  1229→  return (
+  1230→    <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background lg:hidden">
+  1231→      <nav className="flex items-center justify-around py-1">
+  1232→        {mobileItems.map((item) => {
+  1233→          const isActive = current === item.view;
+  1234→          return (
+  1235→            <button
+  1236→              key={item.view}
+  1237→              onClick={() => onChange(item.view)}
+  1238→              className={`flex flex-col items-center gap-0.5 px-2 py-1.5 text-[10px] font-medium transition-colors ${
+  1239→                isActive ? 'text-primary' : 'text-muted-foreground'
+  1240→              }`}
+  1241→            >
+  1242→              <item.icon className="h-4.5 w-4.5" />
+  1243→              <span className="truncate max-w-[56px]">{item.label}</span>
+  1244→            </button>
+  1245→          );
+  1246→        })}
+  1247→      </nav>
+  1248→    </div>
+  1249→  );
+  1250→}
+  1251→
+  1252→// ── Main Admin Dashboard ──────────────────────────────────────
+  1253→
+  1254→export function AdminDashboard() {
+  1255→  const { adminSubView, setAdminSubView, setCurrentView, showMobileMenu, setShowMobileMenu } = useAppStore();
+  1256→
+  1257→  const handleNav = (view: AdminSubView) => {
+  1258→    setAdminSubView(view);
+  1259→    setShowMobileMenu(false);
+  1260→  };
+  1261→
+  1262→  const viewLabels: Record<AdminSubView, string> = {
+  1263→    overview: 'Overview',
+  1264→    campaigns: 'Campaigns',
+  1265→    'review-queue': 'Review Queue',
+  1266→    donations: 'Donations',
+  1267→    withdrawals: 'Withdrawals',
+  1268→    users: 'Users',
+  1269→    organizations: 'Organizations',
+  1270→    categories: 'Categories',
+  1271→    verification: 'Verification',
+  1272→    reports: 'Reports',
+  1273→    compliance: 'Compliance',
+  1274→    featured: 'Featured',
+  1275→    analytics: 'Analytics',
+  1276→    'payment-settings': 'Payment Settings',
+  1277→    'platform-settings': 'Platform Settings',
+  1278→    'audit-logs': 'Audit Logs',
+  1279→    'give-contributions': 'Contributions',
+  1280→    'give-allocations': 'Allocations',
+  1281→    'give-balances': 'Fund Balances',
+  1282→    'give-transparency': 'Transparency',
+  1283→    'give-reports': 'Reports',
+  1284→  };
+  1285→
+  1286→  return (
+  1287→    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 pb-20 lg:pb-6">
+  1288→      <button
+  1289→        onClick={() => setCurrentView('home')}
+  1290→        className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+  1291→      >
+  1292→        <ArrowLeft className="h-4 w-4" /> Back to home
+  1293→      </button>
+  1294→
+  1295→      {/* Mobile header with hamburger */}
+  1296→      <div className="flex items-center justify-between mb-6 lg:hidden">
+  1297→        <div>
+  1298→          <h1 className="text-xl font-bold">Admin Panel</h1>
+  1299→          <p className="text-sm text-muted-foreground">{viewLabels[adminSubView]}</p>
+  1300→        </div>
+  1301→      </div>
+  1302→
+  1303→      {/* Mobile: dropdown-like nav */
+  1304→      <div className="mb-6 lg:hidden">
+  1305→        <div className="flex flex-wrap gap-1.5">
+  1306→          {(adminSubView.startsWith('give-') ? [...sidebarItems.filter(i => i.view !== 'give-contributions'), ...giveSidebarItems] : sidebarItems).map((item) => {
+  1307→            const isActive = adminSubView === item.view;
+  1308→            return (
+  1309→              <Button
+  1310→                key={item.view}
+  1311→                size="sm"
+  1312→                variant={isActive ? 'default' : 'outline'}
+  1313→                className="h-8 text-xs"
+  1314→                onClick={() => handleNav(item.view)}
+  1315→              >
+  1316→                <item.icon className="mr-1.5 h-3.5 w-3.5" />
+  1317→                {item.label}
+  1318→              </Button>
+  1319→            );
+  1320→          })}
+  1321→        </div>
+  1322→      </div>
+  1323→
+  1324→      <div className="flex flex-col lg:flex-row gap-6">
+  1325→        {/* Sidebar — hidden on mobile, visible on lg+ */}
+  1326→        <div className="hidden lg:block lg:w-56 shrink-0">
+  1327→          <div className="sticky top-6 rounded-xl border bg-card p-2">
+  1328→            <h1 className="text-lg font-bold p-3 pb-2">Admin Panel</h1>
+  1329→            <ScrollArea className="max-h-[calc(100vh-200px)]">
+  1330→              <nav className="space-y-0.5 pr-2">
+  1331→                {sidebarItems.map((item) => {
+  1332→                  const isActive = adminSubView === item.view;
+  1333→                  const isGiveSection = item.view === 'give-contributions';
+  1334→                  const isInGive = adminSubView.startsWith('give-');
+  1335→                  return (
+  1336→                    <div key={item.view}>
+  1337→                      <button
+  1338→                        onClick={() => handleNav(item.view)}
+  1339→                        className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+  1340→                          isActive || (isGiveSection && isInGive)
+  1341→                            ? 'bg-primary/10 text-primary'
+  1342→                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+  1343→                        }`}
+  1344→                      >
+  1345→                        <item.icon className="h-4 w-4 shrink-0" />
+  1346→                        <span className="truncate">{item.label}</span>
+  1347→                      </button>
+  1348→                      {isGiveSection && isInGive && (
+  1349→                        <div className="ml-4 mt-0.5 space-y-0.5 border-l-2 border-primary/20 pl-3">
+  1350→                          {giveSidebarItems.map((sub) => {
+  1351→                            const subActive = adminSubView === sub.view;
+  1352→                            return (
+  1353→                              <button
+  1354→                                key={sub.view}
+  1355→                                onClick={() => handleNav(sub.view)}
+  1356→                                className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${
+  1357→                                  subActive
+  1358→                                    ? 'bg-primary/10 text-primary'
+  1359→                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+  1360→                                }`}
+  1361→                              >
+  1362→                                <sub.icon className="h-3.5 w-3.5 shrink-0" />
+  1363→                                <span className="truncate">{sub.label}</span>
+  1364→                              </button>
+  1365→                            );
+  1366→                          })}
+  1367→                        </div>
+  1368→                      )}
+  1369→                    </div>
+  1370→                  );
+  1371→                })}
+  1372→              </nav>
+  1373→            </ScrollArea>
+  1374→          </div>
+  1375→        </div>
+  1376→
+  1377→        {/* Main content */}
+  1378→        <div className="flex-1 min-w-0">
+  1379→          <h1 className="hidden lg:block text-2xl font-bold">{viewLabels[adminSubView]}</h1>
+  1380→          <div className="mt-4 lg:mt-6">
+  1381→            <AdminContent view={adminSubView} />
+  1382→          </div>
+  1383→        </div>
+  1384→      </div>
+  1385→
+  1386→      <MobileNav current={adminSubView} onChange={handleNav} />
+  1387→    </div>
+  1388→  );
+  1389→}
+  1390→

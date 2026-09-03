@@ -40,6 +40,8 @@ model User {
   reviewedCampaignEdits CampaignEdit[]      @relation("CampaignEditReviewer")
   uploadedDocuments     PrivateDocument[]   @relation("DocumentUploader")
   sentInfoRequests      InfoRequest[]       @relation("InfoRequester")
+  gracefundContributions GracefundContribution[]
+  approvedAllocations   GracefundAllocation[] @relation("AllocationApprover")
 
   @@index([authUserId])
   @@index([email])
@@ -100,6 +102,7 @@ model Campaign {
   campaignEdits      CampaignEdit[]
   infoRequests       InfoRequest[]
   riskEvents         RiskEvent[]
+  fundAllocations    GracefundAllocation[]
 
   @@index([status])
   @@index([categoryId])
@@ -494,4 +497,60 @@ model InfoRequest {
   @@index([requesterId])
   @@index([status])
   @@map("inforequest")
+}
+
+// ===== GIVE TO GRACEFUND =====
+
+model GracefundContribution {
+  id                   String   @id @default(cuid()) @map("id")
+  donorId              String?  @map("donorid")
+  donorName            String?  @map("donorname")
+  donorEmail           String?  @map("donoremail")
+  donorPhone           String?  @map("donorphone")
+  amount               Float    @map("amount")
+  purpose              String   @map("purpose") // food_support, shelter_housing, elderly_support, funeral_support, medical_support, education_support, children_family_support, disaster_relief, animal_welfare, community_projects, where_most_needed, operations
+  contributionType     String   @default("GRACEFUND_DIRECT_CONTRIBUTION") @map("contributiontype") // GRACEFUND_DIRECT_CONTRIBUTION
+  paymentStatus        String   @default("pending") @map("paymentstatus") // pending, processing, succeeded, failed, cancelled, refunded
+  paymentProvider      String?  @map("paymentprovider")
+  paymentOrderId       String?  @map("paymentorderid")
+  paymentTransactionId String?  @map("paymenttransactionid")
+  providerResponse     String?  @map("providerresponse") // JSON
+  idempotencyKey       String?  @unique @map("idempotencykey")
+  anonymous            Boolean  @default(false) @map("anonymous")
+  createdAt            DateTime @default(now()) @map("createdat")
+  updatedAt            DateTime @updatedAt @map("updatedat")
+
+  donor       User?                  @relation(fields: [donorId], references: [id])
+  allocations GracefundAllocation[]
+
+  @@index([donorId])
+  @@index([paymentStatus])
+  @@index([purpose])
+  @@index([createdAt])
+  @@map("gracefundcontribution")
+}
+
+model GracefundAllocation {
+  id                            String    @id @default(cuid()) @map("id")
+  contributionId                String    @map("contributionid")
+  purpose                       String    @map("purpose")
+  amount                        Float     @map("amount")
+  beneficiaryOrProgramReference String?   @map("beneficiaryorprogramreference")
+  campaignId                    String?   @map("campaignid")
+  allocationStatus              String    @default("planned") @map("allocationstatus") // planned, approved, allocated, disbursed, completed, cancelled
+  allocatedAt                   DateTime? @map("allocatedat")
+  approvedBy                    String?   @map("approvedby")
+  notes                         String?   @map("notes")
+  createdAt                     DateTime  @default(now()) @map("createdat")
+  updatedAt                     DateTime  @updatedAt @map("updatedat")
+
+  contribution GracefundContribution @relation(fields: [contributionId], references: [id])
+  campaign    Campaign?             @relation(fields: [campaignId], references: [id])
+  approver    User?                 @relation("AllocationApprover", fields: [approvedBy], references: [id])
+
+  @@index([contributionId])
+  @@index([purpose])
+  @@index([allocationStatus])
+  @@index([campaignId])
+  @@map("gracefundallocation")
 }

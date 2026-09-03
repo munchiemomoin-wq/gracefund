@@ -9,6 +9,8 @@ export type AppView =
   | 'fundraiser-dashboard'
   | 'admin-dashboard'
   | 'trust-safety'
+  | 'give'
+  | 'transparency'
   | 'auth';
 
 export type AdminSubView =
@@ -27,7 +29,12 @@ export type AdminSubView =
   | 'analytics'
   | 'payment-settings'
   | 'platform-settings'
-  | 'audit-logs';
+  | 'audit-logs'
+  | 'give-contributions'
+  | 'give-allocations'
+  | 'give-balances'
+  | 'give-transparency'
+  | 'give-reports';
 
 export interface AuthState {
   user: {

@@ -7,11 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ArrowLeft, Heart, DollarSign, FileText, Users, TrendingUp, Eye, Clock, AlertCircle, CheckCircle, BarChart3, Settings, Shield, Star, Flag, CreditCard, Globe, Bell, Lock, Scale, Search, Ban, ChevronRight, CircleDot, AlertTriangle, Activity, ClipboardList, UserCheck, LayoutDashboard, FolderOpen, Tag, Sparkles, TrendingDown, Wallet, XCircle, Info, Loader2, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Heart, DollarSign, FileText, Users, TrendingUp, Eye, Clock, AlertCircle, CheckCircle, BarChart3, Settings, Shield, Star, Flag, CreditCard, Globe, Bell, Lock, Scale, Search, Ban, ChevronRight, CircleDot, AlertTriangle, Activity, ClipboardList, UserCheck, LayoutDashboard, FolderOpen, Tag, Sparkles, TrendingDown, Wallet, XCircle, Info, Loader2, RefreshCw, HandHeart, PieChart } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { formatCurrency, formatCompactCurrency, formatNumber } from '@/lib/currency';
 import { useEffect, useState, useCallback } from 'react';
 import type { AdminSubView } from '@/store/app-store';
+import { GiveContributionsView, GiveAllocationsView, GiveBalancesView, GiveTransparencyView, GiveReportsView } from './admin-give-views';
 
 // ─────────────────────────────────────────────────────────────
 // DonorDashboard (unchanged)
@@ -177,6 +178,15 @@ const sidebarItems: SidebarItem[] = [
   { icon: Lock, label: 'Payment Settings', view: 'payment-settings' },
   { icon: Settings, label: 'Platform Settings', view: 'platform-settings' },
   { icon: Bell, label: 'Audit Logs', view: 'audit-logs' },
+  { icon: HandHeart, label: 'GraceFund Giving', view: 'give-contributions' },
+];
+
+const giveSidebarItems: SidebarItem[] = [
+  { icon: Users, label: 'Contributions', view: 'give-contributions' },
+  { icon: PieChart, label: 'Allocations', view: 'give-allocations' },
+  { icon: BarChart3, label: 'Fund Balances', view: 'give-balances' },
+  { icon: Eye, label: 'Transparency', view: 'give-transparency' },
+  { icon: TrendingUp, label: 'Reports', view: 'give-reports' },
 ];
 
 interface Stats {
@@ -1178,6 +1188,16 @@ function AdminContent({ view }: { view: AdminSubView }) {
       return <WithdrawalsView />;
     case 'audit-logs':
       return <AuditLogsView />;
+    case 'give-contributions':
+      return <GiveContributionsView />;
+    case 'give-allocations':
+      return <GiveAllocationsView />;
+    case 'give-balances':
+      return <GiveBalancesView />;
+    case 'give-transparency':
+      return <GiveTransparencyView />;
+    case 'give-reports':
+      return <GiveReportsView />;
     case 'campaigns':
       return <PlaceholderView title="Campaigns Management" icon={FileText} />;
     case 'donations':
@@ -1256,6 +1276,11 @@ export function AdminDashboard() {
     'payment-settings': 'Payment Settings',
     'platform-settings': 'Platform Settings',
     'audit-logs': 'Audit Logs',
+    'give-contributions': 'Contributions',
+    'give-allocations': 'Allocations',
+    'give-balances': 'Fund Balances',
+    'give-transparency': 'Transparency',
+    'give-reports': 'Reports',
   };
 
   return (
@@ -1275,10 +1300,10 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      {/* Mobile: dropdown-like nav for pages 6-16 */}
+      {/* Mobile nav */}
       <div className="mb-6 lg:hidden">
         <div className="flex flex-wrap gap-1.5">
-          {sidebarItems.map((item) => {
+          {sidebarItems.map(function (item) {
             const isActive = adminSubView === item.view;
             return (
               <Button
@@ -1286,7 +1311,22 @@ export function AdminDashboard() {
                 size="sm"
                 variant={isActive ? 'default' : 'outline'}
                 className="h-8 text-xs"
-                onClick={() => handleNav(item.view)}
+                onClick={function() { handleNav(item.view); }}
+              >
+                <item.icon className="mr-1.5 h-3.5 w-3.5" />
+                {item.label}
+              </Button>
+            );
+          })}
+          {adminSubView.startsWith('give-') && giveSidebarItems.map(function (item) {
+            const isActive = adminSubView === item.view;
+            return (
+              <Button
+                key={item.view}
+                size="sm"
+                variant={isActive ? 'default' : 'outline'}
+                className="h-8 text-xs"
+                onClick={function() { handleNav(item.view); }}
               >
                 <item.icon className="mr-1.5 h-3.5 w-3.5" />
                 {item.label}
@@ -1305,19 +1345,43 @@ export function AdminDashboard() {
               <nav className="space-y-0.5 pr-2">
                 {sidebarItems.map((item) => {
                   const isActive = adminSubView === item.view;
+                  const isGiveSection = item.view === 'give-contributions';
+                  const isInGive = adminSubView.startsWith('give-');
                   return (
-                    <button
-                      key={item.view}
-                      onClick={() => handleNav(item.view)}
-                      className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                        isActive
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                      }`}
-                    >
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      <span className="truncate">{item.label}</span>
-                    </button>
+                    <div key={item.view}>
+                      <button
+                        onClick={() => handleNav(item.view)}
+                        className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                          isActive || (isGiveSection && isInGive)
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        }`}
+                      >
+                        <item.icon className="h-4 w-4 shrink-0" />
+                        <span className="truncate">{item.label}</span>
+                      </button>
+                      {isGiveSection && isInGive && (
+                        <div className="ml-4 mt-0.5 space-y-0.5 border-l-2 border-primary/20 pl-3">
+                          {giveSidebarItems.map((sub) => {
+                            const subActive = adminSubView === sub.view;
+                            return (
+                              <button
+                                key={sub.view}
+                                onClick={() => handleNav(sub.view)}
+                                className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${
+                                  subActive
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                }`}
+                              >
+                                <sub.icon className="h-3.5 w-3.5 shrink-0" />
+                                <span className="truncate">{sub.label}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </nav>

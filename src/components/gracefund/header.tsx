@@ -46,6 +46,7 @@ export function Header() {
 
   const navItems = [
     { label: 'Explore', action: () => setCurrentView('explore') },
+    { label: 'Give to GraceFund', action: () => setCurrentView('give') },
     { label: 'How It Works', action: () => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }) },
     { label: 'Trust & Safety', action: () => setCurrentView('trust-safety') },
   ];
