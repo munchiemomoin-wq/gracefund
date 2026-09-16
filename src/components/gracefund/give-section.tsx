@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { HandHeart, ArrowRight, Eye, Heart, Home, GraduationCap, UtensilsCrossed, Shield, PawPrint, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export function GiveToGraceFundSection() {
+export function GiveToJodoFundSection() {
   const { setCurrentView } = useAppStore();
 
   const highlights = [
@@ -33,7 +33,7 @@ export function GiveToGraceFundSection() {
             </div>
             <h2 className="text-2xl font-bold sm:text-3xl">Help Us Help More People</h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Your contribution helps GraceFund support eligible people, families and community
+              Your contribution helps JodoFund support eligible people, families and community
               causes that need a helping hand. Choose where you would like your contribution
               to make an impact.
             </p>
@@ -66,7 +66,7 @@ export function GiveToGraceFundSection() {
               onClick={() => setCurrentView('give')}
             >
               <HandHeart className="mr-2 h-4 w-4" />
-              Give to GraceFund
+              Give to JodoFund
             </Button>
             <Button
               size="lg"
@@ -94,15 +94,15 @@ export function GiveToGraceFundSection() {
                   <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gold)]/10">
                     <HandHeart className="h-4 w-4 text-[var(--gold)]" />
                   </div>
-                  <p className="font-semibold">Give to GraceFund</p>
+                  <p className="font-semibold">Give to JodoFund</p>
                   <p className="mt-1 text-xs text-muted-foreground">Your contribution supports eligible community programs or the purpose you select.</p>
                 </div>
                 <div className="text-center">
                   <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
                     <Settings className="h-4 w-4" />
                   </div>
-                  <p className="font-semibold">Support GraceFund</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Your contribution helps GraceFund operate the platform.</p>
+                  <p className="font-semibold">Support JodoFund</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Your contribution helps JodoFund operate the platform.</p>
                 </div>
               </div>
             </CardContent>

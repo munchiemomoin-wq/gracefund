@@ -352,7 +352,7 @@ export function CommunityCta() {
           </div>
           <h2 className="text-2xl font-bold sm:text-3xl">Where Compassion Meets Action</h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            GraceFund is more than a platform. It is a community of people coming together to support one another in times of need. Whether it is a medical emergency, a child&apos;s education, rebuilding after a disaster, or supporting a local charity, every act of generosity makes a real difference.
+            JodoFund is more than a platform. It is a community of people coming together to support one another in times of need. Whether it is a medical emergency, a child&apos;s education, rebuilding after a disaster, or supporting a local charity, every act of generosity makes a real difference.
           </p>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
             We believe that when people unite with purpose, extraordinary things happen. Your support does not just provide financial assistance. It brings hope, encouragement, and the knowledge that someone cares.

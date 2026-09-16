@@ -55,7 +55,7 @@ async function main() {
 
   // USERS
   const users = await run(client, `INSERT INTO "User" (id,name,email,role,verificationlevel,status) VALUES
-    ($1,'Admin User','admin@gracefund.org','admin','organization','active'),
+    ($1,'Admin User','admin@jodofund.org','admin','organization','active'),
     ($2,'Sarah Johnson','sarah@example.com','fundraiser','identity','active'),
     ($3,'David Menon','david@example.com','organization','organization','active'),
     ($4,'Maria Santos','maria@example.com','fundraiser','basic','active'),
@@ -194,7 +194,7 @@ async function main() {
   console.log('Created 5 private documents');
 
   // PLATFORM SETTINGS
-  const settings = [['platform_fee_percent','5'],['fixed_transaction_fee','0'],['donor_tip_enabled','true'],['default_tip_percent','5'],['admin_moderation_enabled','true'],['international_donations_enabled','false'],['site_name','GraceFund'],['site_tagline','Giving Hope. Changing Lives.'],['auto_approve_basic_verified','false'],['withdrawal_requires_verification','true']];
+  const settings = [['platform_fee_percent','5'],['fixed_transaction_fee','0'],['donor_tip_enabled','true'],['default_tip_percent','5'],['admin_moderation_enabled','true'],['international_donations_enabled','false'],['site_name','JodoFund'],['site_tagline','Connect. Contribute. Change.'],['auto_approve_basic_verified','false'],['withdrawal_requires_verification','true']];
   for (const [k, v] of settings) await run(client, `INSERT INTO platformsettings (id,key,value) VALUES ($1,$2)`, [uid(), k, v]);
   console.log('Created 9 platform settings');
 

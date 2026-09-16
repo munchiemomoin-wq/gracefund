@@ -223,11 +223,11 @@ export function DonationModal() {
 
           {step === 4 && (
             <div className="space-y-4">
-              {/* GraceFund Tip Section */}
+              {/* JodoFund Tip Section */}
               <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <Gift className="h-4 w-4 text-primary" />
-                  Optional contribution to support GraceFund
+                  Optional contribution to support JodoFund
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Help us keep the platform running. This is entirely optional.
@@ -280,7 +280,7 @@ export function DonationModal() {
                 </div>
                 {tipAmount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">GraceFund Contribution</span>
+                    <span className="text-muted-foreground">JodoFund Contribution</span>
                     <span className="font-medium">+ {formatCurrency(tipAmount)}</span>
                   </div>
                 )}

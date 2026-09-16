@@ -40,8 +40,8 @@ model User {
   reviewedCampaignEdits CampaignEdit[]      @relation("CampaignEditReviewer")
   uploadedDocuments     PrivateDocument[]   @relation("DocumentUploader")
   sentInfoRequests      InfoRequest[]       @relation("InfoRequester")
-  gracefundContributions GracefundContribution[]
-  approvedAllocations   GracefundAllocation[] @relation("AllocationApprover")
+  jodofundContributions JodofundContribution[]
+  approvedAllocations   JodofundAllocation[] @relation("AllocationApprover")
 
   @@index([authUserId])
   @@index([email])
@@ -102,7 +102,7 @@ model Campaign {
   campaignEdits      CampaignEdit[]
   infoRequests       InfoRequest[]
   riskEvents         RiskEvent[]
-  fundAllocations    GracefundAllocation[]
+  fundAllocations    JodofundAllocation[]
 
   @@index([status])
   @@index([categoryId])
@@ -499,9 +499,9 @@ model InfoRequest {
   @@map("inforequest")
 }
 
-// ===== GIVE TO GRACEFUND =====
+// ===== GIVE TO JODFUND =====
 
-model GracefundContribution {
+model JodofundContribution {
   id                   String   @id @default(cuid()) @map("id")
   donorId              String?  @map("donorid")
   donorName            String?  @map("donorname")
@@ -509,7 +509,7 @@ model GracefundContribution {
   donorPhone           String?  @map("donorphone")
   amount               Float    @map("amount")
   purpose              String   @map("purpose") // food_support, shelter_housing, elderly_support, funeral_support, medical_support, education_support, children_family_support, disaster_relief, animal_welfare, community_projects, where_most_needed, operations
-  contributionType     String   @default("GRACEFUND_DIRECT_CONTRIBUTION") @map("contributiontype") // GRACEFUND_DIRECT_CONTRIBUTION
+  contributionType     String   @default("JODFUND_DIRECT_CONTRIBUTION") @map("contributiontype") // JODFUND_DIRECT_CONTRIBUTION
   paymentStatus        String   @default("pending") @map("paymentstatus") // pending, processing, succeeded, failed, cancelled, refunded
   paymentProvider      String?  @map("paymentprovider")
   paymentOrderId       String?  @map("paymentorderid")
@@ -521,16 +521,16 @@ model GracefundContribution {
   updatedAt            DateTime @updatedAt @map("updatedat")
 
   donor       User?                  @relation(fields: [donorId], references: [id])
-  allocations GracefundAllocation[]
+  allocations JodofundAllocation[]
 
   @@index([donorId])
   @@index([paymentStatus])
   @@index([purpose])
   @@index([createdAt])
-  @@map("gracefundcontribution")
+  @@map("jodofundcontribution")
 }
 
-model GracefundAllocation {
+model JodofundAllocation {
   id                            String    @id @default(cuid()) @map("id")
   contributionId                String    @map("contributionid")
   purpose                       String    @map("purpose")
@@ -544,7 +544,7 @@ model GracefundAllocation {
   createdAt                     DateTime  @default(now()) @map("createdat")
   updatedAt                     DateTime  @updatedAt @map("updatedat")
 
-  contribution GracefundContribution @relation(fields: [contributionId], references: [id])
+  contribution JodofundContribution @relation(fields: [contributionId], references: [id])
   campaign    Campaign?             @relation(fields: [campaignId], references: [id])
   approver    User?                 @relation("AllocationApprover", fields: [approvedBy], references: [id])
 
@@ -552,5 +552,5 @@ model GracefundAllocation {
   @@index([purpose])
   @@index([allocationStatus])
   @@index([campaignId])
-  @@map("gracefundallocation")
+  @@map("jodofundallocation")
 }

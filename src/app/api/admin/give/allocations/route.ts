@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     if (purpose) where.purpose = purpose;
 
     const [allocations, total] = await Promise.all([
-      db.gracefundAllocation.findMany({
+      db.jodofundAllocation.findMany({
         where,
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
           approver: { select: { id: true, name: true } },
         },
       }),
-      db.gracefundAllocation.count({ where }),
+      db.jodofundAllocation.count({ where }),
     ]);
 
     return NextResponse.json({ allocations, total, page, limit });
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     }
 
     // Verify contribution exists and has enough unallocated funds
-    const contribution = await db.gracefundContribution.findUnique({
+    const contribution = await db.jodofundContribution.findUnique({
       where: { id: contributionId },
     });
 
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     }
 
     // Check unallocated amount
-    const existingAllocations = await db.gracefundAllocation.aggregate({
+    const existingAllocations = await db.jodofundAllocation.aggregate({
       _sum: { amount: true },
       where: {
         contributionId,
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    const allocation = await db.gracefundAllocation.create({
+    const allocation = await db.jodofundAllocation.create({
       data: {
         contributionId,
         purpose,
@@ -102,8 +102,8 @@ export async function POST(request: Request) {
 
     await createAuditLog({
       adminId: admin.id,
-      action: 'gracefund_allocation_created',
-      entityType: 'gracefund_allocation',
+      action: 'jodofund_allocation_created',
+      entityType: 'jodofund_allocation',
       entityId: allocation.id,
       metadata: { contributionId, purpose, amount: allocAmount, campaignId },
     });

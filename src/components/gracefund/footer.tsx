@@ -51,10 +51,10 @@ export function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">G</span>
+                <span className="text-lg font-bold text-primary-foreground">J</span>
               </div>
               <span className="text-xl font-bold tracking-tight">
-                Grace<span className="text-[var(--gold)]">Fund</span>
+                Jodo<span className="text-[var(--gold)]">Fund</span>
               </span>
             </div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
@@ -63,7 +63,7 @@ export function Footer() {
             <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <Mail className="h-3.5 w-3.5" />
-                <span>hello@gracefund.org</span>
+                <span>hello@jodofund.org</span>
               </div>
             </div>
           </div>
@@ -91,7 +91,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 sm:flex-row">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} GraceFund. All rights reserved. Made with <Heart className="inline h-3 w-3 text-red-500" /> for communities everywhere.
+            &copy; {new Date().getFullYear()} JodoFund. All rights reserved. Made with <Heart className="inline h-3 w-3 text-red-500" /> for communities everywhere.
           </p>
           <div className="flex items-center gap-4">
             <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms</button>

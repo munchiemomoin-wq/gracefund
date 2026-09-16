@@ -18,7 +18,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid allocation status' }, { status: 400 });
     }
 
-    const existing = await db.gracefundAllocation.findUnique({ where: { id } });
+    const existing = await db.jodofundAllocation.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: 'Allocation not found' }, { status: 404 });
     }
@@ -29,15 +29,15 @@ export async function PUT(
     }
     if (notes !== undefined) updateData.notes = notes;
 
-    const allocation = await db.gracefundAllocation.update({
+    const allocation = await db.jodofundAllocation.update({
       where: { id },
       data: updateData,
     });
 
     await createAuditLog({
       adminId: admin.id,
-      action: 'gracefund_allocation_updated',
-      entityType: 'gracefund_allocation',
+      action: 'jodofund_allocation_updated',
+      entityType: 'jodofund_allocation',
       entityId: id,
       metadata: { from: existing.allocationStatus, to: allocationStatus },
     });

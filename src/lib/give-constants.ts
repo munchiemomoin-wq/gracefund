@@ -27,7 +27,7 @@ export const CONTRIBUTION_PURPOSES = [
     id: 'medical_support',
     label: 'Emergency Medical Support',
     emoji: '\uD83C\uDFE5',
-    description: 'Support eligible urgent medical needs following verification and GraceFund eligibility policies.',
+    description: 'Support eligible urgent medical needs following verification and JodoFund eligibility policies.',
   },
   {
     id: 'education_support',
@@ -63,14 +63,14 @@ export const CONTRIBUTION_PURPOSES = [
     id: 'where_most_needed',
     label: 'Where Most Needed',
     emoji: '\uD83D\uDC99',
-    description: 'Allow GraceFund to allocate the contribution among eligible causes according to urgency, verified need, available funds and current community priorities.',
+    description: 'Allow JodoFund to allocate the contribution among eligible causes according to urgency, verified need, available funds and current community priorities.',
     isFlexible: true,
   },
   {
     id: 'operations',
-    label: 'Support GraceFund Operations',
+    label: 'Support JodoFund Operations',
     emoji: '\u2699\uFE0F',
-    description: 'Your contribution helps GraceFund operate the platform, including technology, verification, fraud prevention, payment processing, administration and other essential operating expenses.',
+    description: 'Your contribution helps JodoFund operate the platform, including technology, verification, fraud prevention, payment processing, administration and other essential operating expenses.',
     isOperations: true,
   },
 ] as const;

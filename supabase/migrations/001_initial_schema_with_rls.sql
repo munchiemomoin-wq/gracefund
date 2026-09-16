@@ -1,5 +1,5 @@
 -- ==============================================
--- GRACEFUND PHASE 5: SUPABASE MIGRATION
+-- JODFUND PHASE 5: SUPABASE MIGRATION
 -- Row Level Security policies for all tables
 -- ==============================================
 

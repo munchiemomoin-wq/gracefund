@@ -64,7 +64,7 @@ export function TransparencyPage() {
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
           <Eye className="h-6 w-6 text-primary" />
         </div>
-        <h1 className="text-2xl font-bold sm:text-3xl">Where GraceFund Funds Go</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Where JodoFund Funds Go</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Transparent records of contributions and how they are allocated.
         </p>

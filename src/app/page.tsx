@@ -16,8 +16,8 @@ import { DonationModal } from '@/components/gracefund/donation-modal';
 import { AuthModal } from '@/components/gracefund/auth-modal';
 import { ReportModal } from '@/components/gracefund/report-modal';
 import { TrustSafetyPage } from '@/components/gracefund/trust-safety-page';
-import { GiveToGraceFundSection } from '@/components/gracefund/give-section';
-import { GiveToGraceFundPage } from '@/components/gracefund/give-page';
+import { GiveToJodoFundSection } from '@/components/gracefund/give-section';
+import { GiveToJodoFundPage } from '@/components/gracefund/give-page';
 import { TransparencyPage } from '@/components/gracefund/transparency-page';
 import { DonorDashboard, FundraiserDashboard, AdminDashboard } from '@/components/gracefund/dashboards';
 
@@ -82,7 +82,7 @@ export default function HomePage() {
             {!loading && <VerifiedCampaigns campaigns={campaigns} />}
             <HowItWorks />
             <ImpactStats />
-            <GiveToGraceFundSection />
+            <GiveToJodoFundSection />
             <CommunityCta />
           </>
         )}
@@ -94,7 +94,7 @@ export default function HomePage() {
         {currentView === 'fundraiser-dashboard' && <FundraiserDashboard />}
         {currentView === 'admin-dashboard' && <AdminDashboard />}
         {currentView === 'trust-safety' && <TrustSafetyPage />}
-        {currentView === 'give' && <GiveToGraceFundPage />}
+        {currentView === 'give' && <GiveToJodoFundPage />}
         {currentView === 'transparency' && <TransparencyPage />}
       </main>
 

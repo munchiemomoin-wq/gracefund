@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     const idempotencyKey = randomUUID();
     const paymentStatus = isTestMode ? 'succeeded' : 'pending';
 
-    const contribution = await db.gracefundContribution.create({
+    const contribution = await db.jodofundContribution.create({
       data: {
         donorId: user?.id || null,
         donorName: anonymous ? 'Anonymous Supporter' : (donorName || 'Generous Supporter'),
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
         donorPhone: donorPhone || null,
         amount: contributionAmount,
         purpose,
-        contributionType: 'GRACEFUND_DIRECT_CONTRIBUTION',
+        contributionType: 'JODFUND_DIRECT_CONTRIBUTION',
         paymentStatus,
         paymentProvider: isTestMode ? 'demo' : null,
         paymentOrderId: isTestMode ? `GF-${Date.now()}` : null,
@@ -55,8 +55,8 @@ export async function POST(request: Request) {
 
     await createAuditLog({
       adminId: user?.id,
-      action: 'gracefund_contribution_created',
-      entityType: 'gracefund_contribution',
+      action: 'jodofund_contribution_created',
+      entityType: 'jodofund_contribution',
       entityId: contribution.id,
       metadata: { amount: contributionAmount, purpose, paymentStatus, isTestMode },
     });
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Error creating GraceFund contribution:', error);
+    console.error('Error creating JodoFund contribution:', error);
     return NextResponse.json({ error: 'Failed to process contribution' }, { status: 500 });
   }
 }

@@ -37,3 +37,36 @@ Stage Summary:
 - Financial reporting separation (campaign donations vs platform tips vs refunds)
 - **Build: CLEAN (0 errors, 28 routes compiled)**
 - **Lint: CLEAN (0 warnings, 0 errors)**
+
+---
+Task ID: rebrand-jodofund
+Agent: main
+Task: Rebrand GraceFund → JodoFund with logo and color scheme
+
+Work Log:
+- Copied JodoFund logo SVG from /upload/jodofund_logo.svg to /public/logo.svg
+- Updated globals.css with new oklch color palette: Deep Blue (#1B4F72) primary, Orange/Coral (#FF7A45) accent replacing gold, Medium Blue (#2E6DA4) forest
+- Updated layout.tsx: title "JodoFund — Connect. Contribute. Change.", siteName, keywords, authors
+- Updated header.tsx: logo "J" icon, "Jodo<span>Fund</span>" with orange accent, tagline "Connect. Contribute. Change.", nav "Give to JodoFund"
+- Updated footer.tsx: brand name, email hello@jodofund.org, copyright
+- Updated auth-modal.tsx: "Join JodoFund"
+- Updated donation-modal.tsx: "JodoFund Contribution" and "Optional contribution to support JodoFund"
+- Updated give-section.tsx and give-page.tsx: all GraceFund → JodoFund references
+- Updated homepage-sections.tsx: "JodoFund is more than a platform..."
+- Updated campaign-detail.tsx, trust-safety-page.tsx, report-modal.tsx, transparency-page.tsx
+- Updated admin-give-views.tsx: all 6 label references
+- Updated dashboards.tsx: "JodoFund Giving" sidebar
+- Updated give-constants.ts: 4 description/label references
+- Updated API routes: give/route.ts, transparency/route.ts, donations/route.ts
+- Updated seed.ts and seed-pg.js: admin@jodofund.org, site_name JodoFund, tagline
+- Updated Prisma schema: GracefundContribution → JodofundContribution, GracefundAllocation → JodofundAllocation, DB tables jodofundcontribution/jodofundallocation, JODFUND_DIRECT_CONTRIBUTION
+- Updated all API route Prisma client calls: db.jodofundContribution, db.jodofundAllocation
+- Renamed exports: GiveToJodoFundSection, GiveToJodoFundPage
+- Production build: SUCCESS
+
+Stage Summary:
+- Full rebrand from GraceFund to JodoFund complete across all UI, API, schema, and seed files
+- Color scheme changed from Navy+Gold to Deep Blue+Orange/Coral matching the JodoFund logo
+- Tagline changed from "Giving Hope. Changing Lives." to "Connect. Contribute. Change."
+- Build passes successfully
+- Site cannot render until Supabase credentials are added to .env

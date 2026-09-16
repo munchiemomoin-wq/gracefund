@@ -148,7 +148,7 @@ export function TrustSafetyPage() {
             custom={2}
             className="mx-auto mt-4 max-w-2xl text-lg text-slate-500"
           >
-            Your safety is our top priority. GraceFund uses multi-layered verification,
+            Your safety is our top priority. JodoFund uses multi-layered verification,
             advanced fraud detection, and transparent processes to ensure every donation
             makes a real impact.
           </motion.p>
@@ -283,7 +283,7 @@ export function TrustSafetyPage() {
               Our Guarantees
             </h2>
             <p className="mt-2 text-slate-500">
-              What we promise to every member of the GraceFund community.
+              What we promise to every member of the JodoFund community.
             </p>
           </motion.div>
           <motion.div variants={fadeInUp} custom={1}>

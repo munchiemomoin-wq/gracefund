@@ -12,7 +12,7 @@ import { formatCurrency } from '@/lib/currency';
 
 const STEPS = ['Choose Amount', 'Choose Purpose', 'Your Details', 'Review'];
 
-export function GiveToGraceFundPage() {
+export function GiveToJodoFundPage() {
   const { setCurrentView } = useAppStore();
   const [step, setStep] = useState(0);
   const [amount, setAmount] = useState<number | null>(null);
@@ -82,7 +82,7 @@ export function GiveToGraceFundPage() {
           <p className="mt-2 text-sm text-muted-foreground">{result.message}</p>
           {result.success && selectedAmount && (
             <div className="mt-6 inline-block rounded-xl border bg-muted/30 px-6 py-4 text-left">
-              <p className="text-xs text-muted-foreground">Contribution to GraceFund</p>
+              <p className="text-xs text-muted-foreground">Contribution to JodoFund</p>
               <p className="text-2xl font-bold">{formatCurrency(selectedAmount)}</p>
               <p className="mt-1 text-sm text-muted-foreground">{selectedPurpose?.label}</p>
             </div>
@@ -110,9 +110,9 @@ export function GiveToGraceFundPage() {
 
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold sm:text-3xl">Give to GraceFund</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Give to JodoFund</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Your contribution to GraceFund is separate from donations made directly to fundraising campaigns.
+          Your contribution to JodoFund is separate from donations made directly to fundraising campaigns.
         </p>
       </div>
 
@@ -219,7 +219,7 @@ export function GiveToGraceFundPage() {
               {purpose === 'where_most_needed' && (
                 <div className="mt-4 rounded-lg bg-muted/50 p-3">
                   <p className="text-xs text-muted-foreground">
-                    GraceFund may allocate contributions to eligible causes based on current need and available resources.
+                    JodoFund may allocate contributions to eligible causes based on current need and available resources.
                   </p>
                 </div>
               )}
@@ -227,7 +227,7 @@ export function GiveToGraceFundPage() {
               {purpose === 'operations' && (
                 <div className="mt-4 rounded-lg bg-muted/50 p-3">
                   <p className="text-xs text-muted-foreground">
-                    Your contribution helps GraceFund operate the platform, including technology, verification, fraud prevention, payment processing, administration and other essential operating expenses. This is separate from community-support allocations.
+                    Your contribution helps JodoFund operate the platform, including technology, verification, fraud prevention, payment processing, administration and other essential operating expenses. This is separate from community-support allocations.
                   </p>
                 </div>
               )}
@@ -279,7 +279,7 @@ export function GiveToGraceFundPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between rounded-lg bg-muted/30 p-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Contribution to GraceFund</p>
+                    <p className="text-sm text-muted-foreground">Contribution to JodoFund</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{selectedPurpose.label}</p>
                   </div>
                   <p className="text-2xl font-bold">{formatCurrency(selectedAmount)}</p>
@@ -348,7 +348,7 @@ export function GiveToGraceFundPage() {
 
       {/* Legal note */}
       <p className="mt-6 text-center text-[11px] text-muted-foreground/60 leading-relaxed">
-        Your contribution supports GraceFund&apos;s community programs. Contributions are described as
+        Your contribution supports JodoFund&apos;s community programs. Contributions are described as
         &quot;contributions&quot; or &quot;support&quot; — not as tax-deductible donations, charity donations, or NGO
         donations — unless the applicable legal and tax treatment has been professionally confirmed.
       </p>

@@ -55,7 +55,7 @@ export async function POST(request: Request) {
         donorEmail: donorEmail || null,
         amount: donationAmount, // campaign donation ONLY
         currency,
-        platformTipAmount: tipAmount, // GraceFund tip — separate
+        platformTipAmount: tipAmount, // JodoFund tip — separate
         paymentTotalAmount: totalAmount,
         paymentStatus,
         paymentProvider: isTestMode ? 'demo' : null,

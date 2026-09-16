@@ -394,7 +394,7 @@ export function CampaignDetail() {
                 <ShieldAlert className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                 <div>
                   <p className="text-xs font-medium text-muted-foreground">Donation Transparency</p>
-                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">GraceFund uses verification and review processes designed to help improve trust and transparency. Donor information, beneficiary documents, and internal review notes are kept confidential.</p>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">JodoFund uses verification and review processes designed to help improve trust and transparency. Donor information, beneficiary documents, and internal review notes are kept confidential.</p>
                 </div>
               </div>
             </div>

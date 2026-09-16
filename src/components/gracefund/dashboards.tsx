@@ -178,7 +178,7 @@ const sidebarItems: SidebarItem[] = [
   { icon: Lock, label: 'Payment Settings', view: 'payment-settings' },
   { icon: Settings, label: 'Platform Settings', view: 'platform-settings' },
   { icon: Bell, label: 'Audit Logs', view: 'audit-logs' },
-  { icon: HandHeart, label: 'GraceFund Giving', view: 'give-contributions' },
+  { icon: HandHeart, label: 'JodoFund Giving', view: 'give-contributions' },
 ];
 
 const giveSidebarItems: SidebarItem[] = [

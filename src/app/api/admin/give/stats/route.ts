@@ -16,40 +16,40 @@ export async function GET() {
       allocationStatusBreakdown,
     ] = await Promise.all([
       // Total contributions received (succeeded only)
-      db.gracefundContribution.aggregate({
+      db.jodofundContribution.aggregate({
         _sum: { amount: true },
         _count: true,
         where: { paymentStatus: 'succeeded' },
       }),
       // Total allocated (not cancelled)
-      db.gracefundAllocation.aggregate({
+      db.jodofundAllocation.aggregate({
         _sum: { amount: true },
         where: { allocationStatus: { notIn: ['cancelled'] } },
       }),
       // Total disbursed
-      db.gracefundAllocation.aggregate({
+      db.jodofundAllocation.aggregate({
         _sum: { amount: true },
         where: { allocationStatus: 'disbursed' },
       }),
       // Operations contributions
-      db.gracefundContribution.aggregate({
+      db.jodofundContribution.aggregate({
         _sum: { amount: true },
         where: { paymentStatus: 'succeeded', purpose: 'operations' },
       }),
       // Community support contributions (everything except operations)
-      db.gracefundContribution.aggregate({
+      db.jodofundContribution.aggregate({
         _sum: { amount: true },
         where: { paymentStatus: 'succeeded', purpose: { not: 'operations' } },
       }),
       // Breakdown by purpose
-      db.gracefundContribution.groupBy({
+      db.jodofundContribution.groupBy({
         by: ['purpose'],
         where: { paymentStatus: 'succeeded' },
         _sum: { amount: true },
         _count: true,
       }),
       // Allocation status breakdown
-      db.gracefundAllocation.groupBy({
+      db.jodofundAllocation.groupBy({
         by: ['allocationStatus'],
         _sum: { amount: true },
         _count: true,

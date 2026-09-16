@@ -42,22 +42,22 @@ export async function GET(request: Request) {
     };
 
     const [totalContributions, purposeBreakdown, allocatedTotal, programsSupported] = await Promise.all([
-      db.gracefundContribution.aggregate({
+      db.jodofundContribution.aggregate({
         _sum: { amount: true },
         _count: true,
         where: contributionWhere,
       }),
-      db.gracefundContribution.groupBy({
+      db.jodofundContribution.groupBy({
         by: ['purpose'],
         where: contributionWhere,
         _sum: { amount: true },
         _count: true,
       }),
-      db.gracefundAllocation.aggregate({
+      db.jodofundAllocation.aggregate({
         _sum: { amount: true },
         where: allocationWhere,
       }),
-      db.gracefundAllocation.groupBy({
+      db.jodofundAllocation.groupBy({
         by: ['purpose'],
         where: { ...allocationWhere, allocationStatus: 'completed' },
         _count: true,
@@ -80,7 +80,7 @@ export async function GET(request: Request) {
       animal_welfare: 'Animal Welfare',
       community_projects: 'Community Projects',
       where_most_needed: 'Where Most Needed',
-      operations: 'GraceFund Operations',
+      operations: 'JodoFund Operations',
     };
 
     const breakdown: Record<string, { amount: number; count: number; label: string }> = {};

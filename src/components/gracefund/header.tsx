@@ -46,7 +46,7 @@ export function Header() {
 
   const navItems = [
     { label: 'Explore', action: () => setCurrentView('explore') },
-    { label: 'Give to GraceFund', action: () => setCurrentView('give') },
+    { label: 'Give to JodoFund', action: () => setCurrentView('give') },
     { label: 'How It Works', action: () => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }) },
     { label: 'Trust & Safety', action: () => setCurrentView('trust-safety') },
   ];
@@ -60,11 +60,11 @@ export function Header() {
           className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-            <span className="text-lg font-bold text-primary-foreground">G</span>
+            <span className="text-lg font-bold text-primary-foreground">J</span>
           </div>
           <span className="text-xl font-bold tracking-tight text-foreground">
-            Grace<span className="text-[var(--gold)]">Fund</span>
-            <span className="ml-2 hidden sm:inline text-xs font-normal text-muted-foreground">Giving Hope. Changing Lives.</span>
+            Jodo<span className="text-[var(--gold)]">Fund</span>
+            <span className="ml-2 hidden sm:inline text-xs font-normal text-muted-foreground">Connect. Contribute. Change.</span>
           </span>
         </button>
 
@@ -175,9 +175,9 @@ export function Header() {
           <SheetContent side="right" className="w-80 overflow-y-auto">
             <SheetTitle className="flex items-center gap-2 text-lg font-bold">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-sm font-bold text-primary-foreground">G</span>
+                <span className="text-sm font-bold text-primary-foreground">J</span>
               </div>
-              Grace<span className="text-[var(--gold)]">Fund</span>
+              Jodo<span className="text-[var(--gold)]">Fund</span>
             </SheetTitle>
             <div className="mt-6 space-y-2">
               <form onSubmit={handleSearch} className="relative">

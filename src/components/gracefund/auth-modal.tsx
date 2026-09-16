@@ -127,7 +127,7 @@ export function AuthModal() {
         <div className="gradient-navy px-6 py-5 text-white">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-lg font-semibold">
-              {isResetMode ? 'Reset Password' : authMode === 'login' ? 'Welcome Back' : 'Join GraceFund'}
+              {isResetMode ? 'Reset Password' : authMode === 'login' ? 'Welcome Back' : 'Join JodoFund'}
             </DialogTitle>
             <button onClick={handleClose} className="rounded-full p-1 hover:bg-white/10 transition-colors">
               <X className="h-5 w-5" />

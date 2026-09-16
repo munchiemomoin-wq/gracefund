@@ -104,8 +104,8 @@ export function GiveContributionsView() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">GraceFund Contributions</h2>
-          <p className="text-sm text-muted-foreground">Direct contributions to GraceFund from supporters</p>
+          <h2 className="text-lg font-semibold">JodoFund Contributions</h2>
+          <p className="text-sm text-muted-foreground">Direct contributions to JodoFund from supporters</p>
         </div>
         <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
           <RefreshCw className={"mr-1.5 h-3.5 w-3.5 " + (loading ? 'animate-spin' : '')} />
@@ -136,7 +136,7 @@ export function GiveContributionsView() {
         <div className="rounded-xl border bg-muted/20 p-8 text-center">
           <HandHeart className="mx-auto h-10 w-10 text-muted-foreground/30" />
           <p className="mt-3 text-sm font-medium">No contributions yet</p>
-          <p className="mt-1 text-xs text-muted-foreground">Contributions made through Give to GraceFund will appear here.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Contributions made through Give to JodoFund will appear here.</p>
         </div>
       ) : (
         <>
@@ -274,7 +274,7 @@ export function GiveAllocationsView() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">Fund Allocations</h2>
-          <p className="text-sm text-muted-foreground">Record and manage how GraceFund contributions are allocated</p>
+          <p className="text-sm text-muted-foreground">Record and manage how JodoFund contributions are allocated</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
@@ -437,7 +437,7 @@ export function GiveBalancesView() {
   }
 
   const cards = [
-    { icon: DollarSign, label: 'Total GraceFund Contributions', value: formatCurrency(stats.totalReceived), sub: formatNumber(stats.totalContributions) + ' contributions', color: 'text-primary', bg: 'bg-primary/10' },
+    { icon: DollarSign, label: 'Total JodoFund Contributions', value: formatCurrency(stats.totalReceived), sub: formatNumber(stats.totalContributions) + ' contributions', color: 'text-primary', bg: 'bg-primary/10' },
     { icon: PieChart, label: 'Total Allocated', value: formatCurrency(stats.allocatedAmount), sub: 'Across all purposes', color: 'text-blue-600', bg: 'bg-blue-100' },
     { icon: TrendingUp, label: 'Total Disbursed', value: formatCurrency(stats.disbursedAmount), sub: 'Funds released', color: 'text-emerald-600', bg: 'bg-emerald-100' },
     { icon: BarChart3, label: 'Available Balance', value: formatCurrency(stats.availableBalance), sub: 'Unallocated funds', color: 'text-amber-600', bg: 'bg-amber-100' },
@@ -449,7 +449,7 @@ export function GiveBalancesView() {
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold">Fund Balances</h2>
-        <p className="text-sm text-muted-foreground">Overview of GraceFund giving finances</p>
+        <p className="text-sm text-muted-foreground">Overview of JodoFund giving finances</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map(function (s) {
@@ -504,8 +504,8 @@ export function GiveReportsView() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold">GraceFund Giving Reports</h2>
-        <p className="text-sm text-muted-foreground">Financial reports and exportable data for GraceFund contributions and allocations</p>
+        <h2 className="text-lg font-semibold">JodoFund Giving Reports</h2>
+        <p className="text-sm text-muted-foreground">Financial reports and exportable data for JodoFund contributions and allocations</p>
       </div>
       <div className="rounded-xl border bg-muted/20 p-8 text-center">
         <BarChart3 className="mx-auto h-10 w-10 text-muted-foreground/30" />

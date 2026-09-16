@@ -82,7 +82,7 @@ export function ReportModal() {
         <DialogHeader>
           <DialogTitle>Report Campaign</DialogTitle>
           <DialogDescription>
-            Help us keep GraceFund safe. Your report will be reviewed by our team.
+            Help us keep JodoFund safe. Your report will be reviewed by our team.
           </DialogDescription>
         </DialogHeader>
 

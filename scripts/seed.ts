@@ -65,7 +65,7 @@ async function main() {
   ]);
 
   // ===== USERS (diverse, no religious titles) =====
-  const admin = await prisma.user.create({ data: { name: 'Admin User', email: 'admin@gracefund.org', role: 'admin', verificationLevel: 'organization', status: 'active' } });
+  const admin = await prisma.user.create({ data: { name: 'Admin User', email: 'admin@jodofund.org', role: 'admin', verificationLevel: 'organization', status: 'active' } });
   const users = await Promise.all([
     prisma.user.create({ data: { name: 'Sarah Johnson', email: 'sarah@example.com', phone: '+91-9876543210', role: 'fundraiser', verificationLevel: 'identity', status: 'active' } }),
     prisma.user.create({ data: { name: 'David Menon', email: 'david@example.com', phone: '+91-9876543211', role: 'organization', verificationLevel: 'organization', status: 'active' } }),
@@ -363,8 +363,8 @@ async function main() {
       { key: 'default_tip_percent', value: '5' },
       { key: 'admin_moderation_enabled', value: 'true' },
       { key: 'international_donations_enabled', value: 'false' },
-      { key: 'site_name', value: 'GraceFund' },
-      { key: 'site_tagline', value: 'Giving Hope. Changing Lives.' },
+      { key: 'site_name', value: 'JodoFund' },
+      { key: 'site_tagline', value: 'Connect. Contribute. Change.' },
       { key: 'site_description', value: 'A trusted community crowdfunding platform that helps individuals, families, communities, organizations, and meaningful causes raise financial support when they need it most.' },
       { key: 'max_campaign_goal_inr', value: '50000000' },
       { key: 'auto_approve_basic_verified', value: 'false' },

@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     if (purpose) where.purpose = purpose;
 
     const [contributions, total] = await Promise.all([
-      db.gracefundContribution.findMany({
+      db.jodofundContribution.findMany({
         where,
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
           donor: { select: { id: true, name: true, email: true } },
         },
       }),
-      db.gracefundContribution.count({ where }),
+      db.jodofundContribution.count({ where }),
     ]);
 
     return NextResponse.json({ contributions, total, page, limit });
