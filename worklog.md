@@ -70,3 +70,26 @@ Stage Summary:
 - Tagline changed from "Giving Hope. Changing Lives." to "Connect. Contribute. Change."
 - Build passes successfully
 - Site cannot render until Supabase credentials are added to .env
+
+---
+Task ID: supabase-connect
+Agent: main
+Task: Connect JodoFund to real Supabase PostgreSQL backend
+
+Work Log:
+- Wrote real Supabase credentials to .env
+- Discovered direct DB connection (port 5432) unreachable from this environment
+- Discovered transaction pooler (port 6543) with postgres.projectref username not compatible with Prisma
+- Found session mode pooler (port 5432 on pooler host) works with both psycopg2 and Prisma
+- Generated SQL from Prisma schema and pushed 128 statements creating 23 tables via psycopg2
+- Seeded database with 10 categories, 8 users, 6 campaigns, 10 donations, 10 platform settings
+- Updated DATABASE_URL to use session mode pooler: aws-0-ap-northeast-2.pooler.supabase.com:5432
+- Removed directUrl from Prisma schema (only pooler available)
+- Production build successful
+- Site serving on port 3000 with all JodoFund branding
+
+Stage Summary:
+- JodoFund is now connected to live Supabase PostgreSQL at rdrlvbxxmfpooghmhwmk
+- Database has 23 tables with seed data
+- Site accessible at localhost:3000 (production mode)
+- All Supabase auth endpoints functional
