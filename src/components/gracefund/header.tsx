@@ -5,7 +5,7 @@ import { useAppStore } from '@/store/app-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Menu, Search, User, Heart, LogOut, Bell, Shield, ChevronDown } from 'lucide-react';
+import { Menu, Search, User, Heart, LogOut, Bell, Shield, ChevronDown, Phone } from 'lucide-react';
 
 export function Header() {
   const {
@@ -47,7 +47,9 @@ export function Header() {
   const navItems = [
     { label: 'Explore', action: () => setCurrentView('explore') },
     { label: 'Give to JodoFund', action: () => setCurrentView('give') },
-    { label: 'How It Works', action: () => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }) },
+    { label: 'How It Works', action: () => setCurrentView('how-it-works') },
+    { label: 'Success Stories', action: () => setCurrentView('success-stories') },
+    { label: 'Smart Coach', action: () => setCurrentView('smart-coach') },
     { label: 'Trust & Safety', action: () => setCurrentView('trust-safety') },
   ];
 
@@ -87,6 +89,10 @@ export function Header() {
 
         {/* Desktop Right */}
         <div className="hidden items-center gap-3 md:flex">
+          <Button variant="ghost" size="sm" onClick={() => setCurrentView('callback')} className="gap-1.5 text-sm text-primary">
+            <Phone className="h-4 w-4" />
+            <span className="hidden lg:inline">Callback</span>
+          </Button>
           <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input

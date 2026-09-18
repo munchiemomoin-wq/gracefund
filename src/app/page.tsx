@@ -20,6 +20,16 @@ import { GiveToJodoFundSection } from '@/components/gracefund/give-section';
 import { GiveToJodoFundPage } from '@/components/gracefund/give-page';
 import { TransparencyPage } from '@/components/gracefund/transparency-page';
 import { DonorDashboard, FundraiserDashboard, AdminDashboard } from '@/components/gracefund/dashboards';
+import { HowItWorksPage } from '@/components/gracefund/how-it-works-page';
+import { SuccessStoriesSection, SuccessStoriesPage } from '@/components/gracefund/success-stories';
+import { SmartCoachPage } from '@/components/gracefund/smart-coach';
+import { MonthlyDonationsSection, MonthlyDonationsPage } from '@/components/gracefund/monthly-donations';
+import { TaxBenefitsSection, TaxBenefitsPage } from '@/components/gracefund/tax-benefits';
+import { FundraisingTipsPage } from '@/components/gracefund/fundraising-tips';
+import { DonorWallPage } from '@/components/gracefund/donor-wall';
+import { GivingGuaranteePage } from '@/components/gracefund/giving-guarantee';
+import { TeamFundraisingPage } from '@/components/gracefund/team-fundraising';
+import { CallbackWidget } from '@/components/gracefund/callback-widget';
 
 interface Campaign {
   id: string;
@@ -84,6 +94,9 @@ export default function HomePage() {
             <ImpactStats />
             <GiveToJodoFundSection />
             <CommunityCta />
+            <SuccessStoriesSection />
+            <MonthlyDonationsSection />
+            <TaxBenefitsSection />
           </>
         )}
 
@@ -96,6 +109,15 @@ export default function HomePage() {
         {currentView === 'trust-safety' && <TrustSafetyPage />}
         {currentView === 'give' && <GiveToJodoFundPage />}
         {currentView === 'transparency' && <TransparencyPage />}
+        {currentView === 'how-it-works' && <HowItWorksPage />}
+        {currentView === 'success-stories' && <SuccessStoriesPage />}
+        {currentView === 'smart-coach' && <SmartCoachPage />}
+        {currentView === 'monthly-donations' && <MonthlyDonationsPage />}
+        {currentView === 'tax-benefits' && <TaxBenefitsPage />}
+        {currentView === 'fundraising-tips' && <FundraisingTipsPage />}
+        {currentView === 'donor-wall' && <DonorWallPage />}
+        {currentView === 'giving-guarantee' && <GivingGuaranteePage />}
+        {currentView === 'team-fundraising' && <TeamFundraisingPage />}
       </main>
 
       <Footer />
@@ -104,6 +126,7 @@ export default function HomePage() {
       <DonationModal />
       <AuthModal />
       <ReportModal />
+      <CallbackWidget />
     </div>
   );
 }

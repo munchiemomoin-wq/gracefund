@@ -11,7 +11,17 @@ export type AppView =
   | 'trust-safety'
   | 'give'
   | 'transparency'
-  | 'auth';
+  | 'auth'
+  | 'how-it-works'
+  | 'success-stories'
+  | 'smart-coach'
+  | 'monthly-donations'
+  | 'tax-benefits'
+  | 'fundraising-tips'
+  | 'donor-wall'
+  | 'giving-guarantee'
+  | 'team-fundraising'
+  | 'callback';
 
 export type AdminSubView =
   | 'overview'
